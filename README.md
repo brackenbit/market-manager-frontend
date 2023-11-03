@@ -1,46 +1,48 @@
-# Getting Started with Create React App
+# Market Manager App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Market Manager is an application to help manage farmers' markets.
 
-## Available Scripts
+## Front End
 
-In the project directory, you can run:
+This TypeScript/React application provides the front end for Market Manager, and works with a Java / Spring Boot back end.
 
-### `npm start`
+## Functionality
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Currently implemented functionality includes:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+-   application infrastructure (database, authentication, etc.)
+-   managing stallholders
+    -   library of stallholder information
+-   managing markets
+    -   calendar view of market events
 
-### `npm test`
+Some of the intended functionality yet to be implemented includes:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+-   managing stallholders:
+    -   track payment of stall fees,
+    -   track attendance.
+-   manage markets:
+    -   automatically generate market events based on recurrence pattern,
+    -   automatically generate list of expected stallholders based on typical stallholder attendance pattern,
+    -   plan site maps, with automated assistance to lay out stallholders appropriately based on various characteristics.
 
-### `npm run build`
+## Design Decisions
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Language / Framework
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+TypeScript/React were used as I wanted to develop my skills with these commonly-used technologies.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Identity and Access Management
 
-### `npm run eject`
+Several different implementations were developed for the IAM, so that I could learn more about different techniques and options, including a custom authorization server implemented with Spring Security, and setting up a KeyCloak instance. Ultimately, as reliability and security are so important for IAM, Okta was used as an off-the-shelf solution.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+# Running the app
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The application as stored in this repo will not run, as it relies on the presence of a valid ".../lib/OktaConfig.ts", which is omitted as it contains secrets.
+A valid OktaConfig.ts takes the format shown in OktaConfigExample.ts.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+The Okta user set up for this application should provide a claim of "userType", which may be blank, and is "admin" for an admin user.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+For the application to function as intended, the companion back end application must be running at localhost:8080.
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+(Readme last updated 03Nov2023)
