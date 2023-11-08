@@ -2,14 +2,14 @@
  * Market Manager
  * (C) Brackenbit 2023
  *
- * Component to render search bar for StallholdersPage.
+ * Component to render search bar for StallholderList.
  * (Separated out for readability.)
  */
 
 import { useState } from "react";
-import StallholderCategoryModel from "../../../models/StallholderCategoryModel";
+import StallholderCategoryModel from "../../models/StallholderCategoryModel";
 
-export const SearchBar: React.FC<{
+export const StallholderListSearchBar: React.FC<{
     search: string;
     setSearch: any;
     searchClicked: any;
@@ -18,9 +18,9 @@ export const SearchBar: React.FC<{
     setSelectedCategory: any;
 }> = (props) => {
     return (
-        <div className="container my-2">
+        <div className="my-2">
             <div className="row">
-                <div className="col-6">
+                <div className="col-md col-sm-12">
                     <div className="d-flex">
                         <input
                             type="search"
@@ -32,7 +32,7 @@ export const SearchBar: React.FC<{
                         />
                     </div>
                 </div>
-                <div className="col-auto">
+                <div className="col-md-auto col-6">
                     <div className="dropdown">
                         <button
                             type="button"
@@ -80,8 +80,12 @@ export const SearchBar: React.FC<{
                         </ul>
                     </div>
                 </div>
-                <div className="col-auto">
-                    <button className="btn " onClick={props.searchClicked}>
+                <div className="col-md-auto col-6">
+                    <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={props.searchClicked}
+                    >
                         Search
                     </button>
                 </div>

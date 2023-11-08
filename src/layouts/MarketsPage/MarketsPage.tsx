@@ -64,15 +64,6 @@ export const MarketsPage = () => {
                                         Market Day
                                     </Link>
                                 </div>
-                                {authState?.isAuthenticated &&
-                                    authState.accessToken?.claims?.userType ===
-                                        "admin" && (
-                                        <div className="col-auto">
-                                            <button className="btn btn-primary">
-                                                Add Market
-                                            </button>
-                                        </div>
-                                    )}
                             </div>
                         </div>
                     </div>

@@ -17,8 +17,10 @@ import { LandingRedirect } from "./layouts/LandingPage/LandingRedirect";
 import { StallholdersPage } from "./layouts/StallholdersPage/StallholdersPage";
 import { MarketsPage } from "./layouts/MarketsPage/MarketsPage";
 import { StallholderPage } from "./layouts/StallholderPage/StallholderPage";
-import { AdminPage } from "./layouts/AdminPage/AdminPage";
+import { AdminPage } from "./layouts/AdminPages/AdminPage/AdminPage";
 import { MarketPage } from "./layouts/MarketPage/MarketPage";
+import { MarketAdminPage } from "./layouts/AdminPages/MarketAdminPage/MarketAdminPage";
+import { StallholderAdminPage } from "./layouts/AdminPages/StallholderAdminPage/StallholderAdminPage";
 
 const oktaAuth = new OktaAuth(OktaConfig);
 
@@ -77,8 +79,14 @@ export const App = () => {
                         <SecureRoute path="/stallholders/:stallholderId">
                             <StallholderPage />
                         </SecureRoute>
-                        <SecureRoute path="/admin">
+                        <SecureRoute path="/admin" exact>
                             <AdminPage />
+                        </SecureRoute>
+                        <SecureRoute path="/admin/market">
+                            <MarketAdminPage />
+                        </SecureRoute>
+                        <SecureRoute path="/admin/stallholder">
+                            <StallholderAdminPage />
                         </SecureRoute>
                     </Switch>
                 </div>
