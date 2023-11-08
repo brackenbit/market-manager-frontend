@@ -32,8 +32,8 @@ export const DarkModeToggle = () => {
             <label className="btn btn-outline-dark" htmlFor="btn-dark-dark">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
+                    width="16"
+                    height="16"
                     fill="currentColor"
                     className="bi bi-moon"
                     viewBox="0 0 16 16"
@@ -51,8 +51,8 @@ export const DarkModeToggle = () => {
             <label className="btn btn-outline-dark" htmlFor="btn-dark-light">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
+                    width="16"
+                    height="16"
                     fill="currentColor"
                     className="bi bi-brightness-high"
                     viewBox="0 0 16 16"

@@ -100,10 +100,12 @@ export const StallholderList: React.FC<{ onClickFunction: any }> = (props) => {
                     loadedStallholders.push({
                         id: responseData[key].id,
                         name: responseData[key].name,
-                        contactName: responseData[key].contactName,
-                        contactPhone: responseData[key].contactPhone,
-                        email: responseData[key].email,
                         category: responseData[key].category,
+                        contactName: responseData[key].contactName,
+                        preferredName: responseData[key].preferredName,
+                        phone: responseData[key].phone,
+                        email: responseData[key].email,
+
                         regular: responseData[key].regular,
                         stallSize: responseData[key].stallSize,
                         characteristics: responseData[key].characteristics,
