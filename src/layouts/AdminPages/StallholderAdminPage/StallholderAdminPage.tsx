@@ -16,10 +16,6 @@ export const StallholderAdminPage = () => {
             {/* TODO - will be replaced with breadcrumbs */}
             <h3>Stallholder Admin</h3>
 
-            <div className="alert alert-warning my-3">
-                Currently under construction.
-            </div>
-
             <nav>
                 <div className="nav nav-tabs" id="nav-tab" role="tablist">
                     <button

@@ -1,15 +1,13 @@
 /*
  * Market Manager
  * (C) Brackenbit 2023
- *
- * TODO - Non-functional GUI implemented.
- * Backend needs update to support this.
  */
 
 import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
 import StallholderCategoryModel from "../../../../models/StallholderCategoryModel";
 import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
+import AddStallholderRequest from "../../../../models/AddStallholderRequest";
 
 export const AddStallholderPane = () => {
     const { authState } = useOktaAuth();
@@ -19,9 +17,12 @@ export const AddStallholderPane = () => {
     >([]);
     const [isLoadingStallholderCategories, setIsLoadingStallholderCategories] =
         useState(true);
+    // Display flags
+    const [displayWarning, setDisplayWarning] = useState(false);
+    const [displaySuccess, setDisplaySuccess] = useState(false);
     // Stallholder info
     const [stallName, setStallName] = useState("");
-    const [category, setCategory] = useState("Category");
+    const [category, setCategory] = useState("Category *");
     const [contactName, setContactName] = useState("");
     const [preferredName, setPreferredName] = useState("");
     const [phone, setPhone] = useState("");
@@ -93,6 +94,60 @@ export const AddStallholderPane = () => {
         setCharacteristics("");
     }
 
+    async function submitNewStallholder() {
+        const url = `http://localhost:8080/api/admin/add/stallholder`;
+        // Only proceed if authenticated and required fields are filled
+        if (
+            authState?.isAuthenticated &&
+            stallName !== "" &&
+            category !== "Category" &&
+            contactName !== "" &&
+            phone !== "" &&
+            email !== ""
+        ) {
+            // Create new AddStallholderRequest with the entered data
+            const stallholder: AddStallholderRequest =
+                new AddStallholderRequest(
+                    stallName,
+                    category,
+                    contactName,
+                    preferredName,
+                    phone,
+                    email,
+                    regular,
+                    stallSize,
+                    characteristics
+                );
+
+            // Set up request options for the imminent POST request
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(stallholder),
+            };
+
+            // Make POST request
+            const submitNewStallholderResponse = await fetch(
+                url,
+                requestOptions
+            );
+            if (!submitNewStallholderResponse.ok) {
+                throw new Error("Something went wrong!");
+            }
+            // Display success and clear fields
+            clearFields();
+            setDisplayWarning(false);
+            setDisplaySuccess(true);
+        } else {
+            // Display warning
+            setDisplayWarning(true);
+            setDisplaySuccess(false);
+        }
+    }
+
     if (isLoadingStallholderCategories) {
         return <SpinnerLoading />;
     }
@@ -107,7 +162,21 @@ export const AddStallholderPane = () => {
 
     return (
         <div className="mt-3">
+            {displaySuccess && (
+                <div className="alert alert-success" role="alert">
+                    Stallholder added successfully
+                </div>
+            )}
+            {displayWarning && (
+                <div className="alert alert-warning" role="alert">
+                    Please fill out required fields
+                </div>
+            )}
+
             <h4>New Stallholder Details</h4>
+            <p>
+                <em>* Required fields</em>
+            </p>
 
             <div className="">
                 <form method="POST">
@@ -122,7 +191,7 @@ export const AddStallholderPane = () => {
                             onChange={(e) => setStallName(e.target.value)}
                             value={stallName}
                         />
-                        <label htmlFor="stallNameInput">Stall Name</label>
+                        <label htmlFor="stallNameInput">Stall Name *</label>
                     </div>
                     {/* category */}
                     <div className="my-3">
@@ -173,7 +242,7 @@ export const AddStallholderPane = () => {
                             onChange={(e) => setContactName(e.target.value)}
                             value={contactName}
                         />
-                        <label htmlFor="contactNameInput">Contact Name</label>
+                        <label htmlFor="contactNameInput">Contact Name *</label>
                     </div>
                     {/* preferredName */}
                     <div className="form-floating mb-2">
@@ -201,7 +270,7 @@ export const AddStallholderPane = () => {
                             onChange={(e) => setPhone(e.target.value)}
                             value={phone}
                         />
-                        <label htmlFor="phoneInput">Phone</label>
+                        <label htmlFor="phoneInput">Phone *</label>
                     </div>
                     {/* email */}
                     <div className="form-floating mb-2">
@@ -214,7 +283,7 @@ export const AddStallholderPane = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             value={email}
                         />
-                        <label htmlFor="emailInput">Email</label>
+                        <label htmlFor="emailInput">Email *</label>
                     </div>
                     {/* regular */}
                     <div className="form-check my-3">
@@ -223,6 +292,7 @@ export const AddStallholderPane = () => {
                             type="checkbox"
                             value=""
                             id="regularCheckbox"
+                            // TODO - receiving warning although this works perfectly:
                             checked={regular}
                             onClick={() => setRegular(!regular)}
                         />
@@ -268,7 +338,11 @@ export const AddStallholderPane = () => {
                     <div className="row mt-3">
                         <div className="col"></div>
                         <div className="col-auto">
-                            <button type="button" className="btn btn-primary">
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={submitNewStallholder}
+                            >
                                 Add Stallholder
                             </button>
                         </div>

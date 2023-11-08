@@ -12,6 +12,9 @@ export const EditStallholderPane = () => {
 
     return (
         <div>
+            <div className="alert alert-warning my-3">
+                Currently under construction.
+            </div>
             <StallholderList onClickFunction={noop} />
         </div>
     );
