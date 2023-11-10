@@ -3,12 +3,9 @@
  * (C) Brackenbit 2023
  */
 
-import { useState } from "react";
 import { AddStallholderPane } from "./components/AddStallholderPane";
 import { EditStallholderPane } from "./components/EditStallholderPane";
 import { ArchiveStallholderPane } from "./components/ArchiveStallholderPane";
-
-function noop() {}
 
 export const StallholderAdminPage = () => {
     return (

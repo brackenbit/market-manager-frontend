@@ -4,19 +4,14 @@
  */
 
 import { useOktaAuth } from "@okta/okta-react";
-import { useEffect, useState } from "react";
-import StallholderCategoryModel from "../../../../models/StallholderCategoryModel";
+import { useState } from "react";
 import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
 import AddStallholderRequest from "../../../../models/AddStallholderRequest";
+import { EditStallholderFields } from "./EditStallholderFields";
+import useStallholderCategories from "../../../../CustomHooks/useStallholderCategories";
 
 export const AddStallholderPane = () => {
     const { authState } = useOktaAuth();
-    const [httpError, setHttpError] = useState(null);
-    const [stallholderCategories, setStallholderCategories] = useState<
-        StallholderCategoryModel[]
-    >([]);
-    const [isLoadingStallholderCategories, setIsLoadingStallholderCategories] =
-        useState(true);
     // Display flags
     const [displayWarning, setDisplayWarning] = useState(false);
     const [displaySuccess, setDisplaySuccess] = useState(false);
@@ -30,57 +25,12 @@ export const AddStallholderPane = () => {
     const [regular, setRegular] = useState(false);
     const [stallSize, setStallSize] = useState(1);
     const [characteristics, setCharacteristics] = useState("");
-
-    // useEffect - fetchStallholderCategories
-    // Load list of (authoritative) stallholder categories
-    // Used e.g. to populate category selection, and enforced on new stallholder creation.
-    // NOT enforced at DB level, or on existing stallholders.
-    // (Trade off to give flexibility/reliability at cost of (fixable) inconsistency.)
-    useEffect(() => {
-        const fetchStallholderCategories = async () => {
-            if (authState && authState.isAuthenticated) {
-                const url: string =
-                    "http://localhost:8080/api/stallholderCategories/search/findAllByOrderByNameAsc";
-
-                const requestOptions = {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
-                        "Content-Type": "application/json",
-                    },
-                };
-
-                const response = await fetch(url, requestOptions);
-                if (!response.ok) {
-                    throw new Error("Failed to fetch stallholder categories");
-                }
-
-                const responseJson = await response.json();
-                const responseData =
-                    responseJson._embedded.stallholderCategories;
-
-                // Load retrieved data into an array of StallholderCategoryModel
-                const loadedStallholderCategories: StallholderCategoryModel[] =
-                    [];
-                for (const key in responseData) {
-                    loadedStallholderCategories.push({
-                        id: responseData[key].id,
-                        name: responseData[key].name,
-                    });
-                }
-                setStallholderCategories(loadedStallholderCategories);
-            }
-
-            setIsLoadingStallholderCategories(false);
-        };
-
-        fetchStallholderCategories().catch((error: any) => {
-            // Error encountered - stop loading and set HTTP error
-            setIsLoadingStallholderCategories(false);
-            setHttpError(error.message);
-        });
-        window.scrollTo(0, 0);
-    }, []);
+    // Use custom hook for stallholder categories
+    const {
+        stallholderCategories,
+        isLoadingStallholderCategories,
+        httpErrorStallholderCategories,
+    } = useStallholderCategories();
 
     function clearFields() {
         setStallName("");
@@ -106,7 +56,7 @@ export const AddStallholderPane = () => {
             email !== ""
         ) {
             // Create new AddStallholderRequest with the entered data
-            const stallholder: AddStallholderRequest =
+            const newStallholder: AddStallholderRequest =
                 new AddStallholderRequest(
                     stallName,
                     category,
@@ -126,7 +76,7 @@ export const AddStallholderPane = () => {
                     Authorization: `Bearer ${authState.accessToken?.accessToken}`,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(stallholder),
+                body: JSON.stringify(newStallholder),
             };
 
             // Make POST request
@@ -152,10 +102,12 @@ export const AddStallholderPane = () => {
         return <SpinnerLoading />;
     }
 
-    if (httpError) {
+    if (httpErrorStallholderCategories) {
         return (
             <div className="container m-5">
-                <div className="alert alert-danger">{httpError}</div>
+                <div className="alert alert-danger">
+                    {httpErrorStallholderCategories}
+                </div>
             </div>
         );
     }
@@ -179,184 +131,50 @@ export const AddStallholderPane = () => {
             </p>
 
             <div className="">
-                <form method="POST">
-                    {/* stallName */}
-                    <div className="form-floating mb-2">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="stallNameInput"
-                            placeholder="" // Bootstrap floating label requires placeholder present
-                            required
-                            onChange={(e) => setStallName(e.target.value)}
-                            value={stallName}
-                        />
-                        <label htmlFor="stallNameInput">Stall Name *</label>
-                    </div>
-                    {/* category */}
-                    <div className="my-3">
-                        <div className="dropdown">
-                            <button
-                                type="button"
-                                className="btn btn-secondary dropdown-toggle"
-                                id="dropdownSearchCategory"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                {category}
-                            </button>
-                            <ul
-                                className="dropdown-menu"
-                                aria-labelledby="dropdownSearchCategory"
-                            >
-                                {stallholderCategories.map(
-                                    (
-                                        stallholderCategory: StallholderCategoryModel
-                                    ) => (
-                                        <li key={stallholderCategory.id}>
-                                            <a
-                                                className="dropdown-item"
-                                                href="#"
-                                                onClick={() =>
-                                                    setCategory(
-                                                        stallholderCategory.name
-                                                    )
-                                                }
-                                            >
-                                                {stallholderCategory.name}
-                                            </a>
-                                        </li>
-                                    )
-                                )}
-                            </ul>
-                        </div>
-                    </div>
-                    {/* contactName */}
-                    <div className="form-floating mb-2">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="contactNameInput"
-                            placeholder=""
-                            required
-                            onChange={(e) => setContactName(e.target.value)}
-                            value={contactName}
-                        />
-                        <label htmlFor="contactNameInput">Contact Name *</label>
-                    </div>
-                    {/* preferredName */}
-                    <div className="form-floating mb-2">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="preferredNameInput"
-                            placeholder=""
-                            required
-                            onChange={(e) => setPreferredName(e.target.value)}
-                            value={preferredName}
-                        />
-                        <label htmlFor="preferredNameInput">
-                            Preferred Name
-                        </label>
-                    </div>
-                    {/* phone */}
-                    <div className="form-floating mb-2">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="phoneInput"
-                            placeholder=""
-                            required
-                            onChange={(e) => setPhone(e.target.value)}
-                            value={phone}
-                        />
-                        <label htmlFor="phoneInput">Phone *</label>
-                    </div>
-                    {/* email */}
-                    <div className="form-floating mb-2">
-                        <input
-                            type="email"
-                            className="form-control"
-                            id="emailInput"
-                            placeholder=""
-                            required
-                            onChange={(e) => setEmail(e.target.value)}
-                            value={email}
-                        />
-                        <label htmlFor="emailInput">Email *</label>
-                    </div>
-                    {/* regular */}
-                    <div className="form-check my-3">
-                        <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="regularCheckbox"
-                            // TODO - receiving warning although this works perfectly:
-                            checked={regular}
-                            onClick={() => setRegular(!regular)}
-                        />
-                        <label
-                            className="form-check-label"
-                            htmlFor="regularCheckbox"
+                <EditStallholderFields
+                    stallholderCategories={stallholderCategories}
+                    stallName={stallName}
+                    setStallName={setStallName}
+                    category={category}
+                    setCategory={setCategory}
+                    contactName={contactName}
+                    setContactName={setContactName}
+                    preferredName={preferredName}
+                    setPreferredName={setPreferredName}
+                    phone={phone}
+                    setPhone={setPhone}
+                    email={email}
+                    setEmail={setEmail}
+                    regular={regular}
+                    setRegular={setRegular}
+                    stallSize={stallSize}
+                    setStallSize={setStallSize}
+                    characteristics={characteristics}
+                    setCharacteristics={setCharacteristics}
+                />
+
+                {/* Bottom buttons */}
+                <div className="row mt-3">
+                    <div className="col"></div>
+                    <div className="col-auto">
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={submitNewStallholder}
                         >
-                            Regular Attendee
-                        </label>
+                            Add Stallholder
+                        </button>
                     </div>
-                    {/* stallSize */}
-                    <div className="form-floating mb-2">
-                        <input
-                            type="number"
-                            className="form-control"
-                            id="stallSizeInput"
-                            placeholder=""
-                            required
-                            onChange={(e) =>
-                                setStallSize(Number(e.target.value))
-                            }
-                            value={stallSize}
-                        />
-                        <label htmlFor="stallSizeInput">Stall Size</label>
+                    <div className="col-auto">
+                        <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={clearFields}
+                        >
+                            Clear
+                        </button>
                     </div>
-                    {/* characteristics */}
-                    {/* TEMP - inelegant way of setting characteristics as placeholder */}
-                    <div className="form-floating mb-2">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="characteristicsInput"
-                            placeholder=""
-                            required
-                            onChange={(e) => setCharacteristics(e.target.value)}
-                            value={characteristics}
-                        />
-                        <label htmlFor="characteristicsInput">
-                            Characteristics
-                        </label>
-                    </div>
-                    {/* Bottom buttons */}
-                    <div className="row mt-3">
-                        <div className="col"></div>
-                        <div className="col-auto">
-                            <button
-                                type="button"
-                                className="btn btn-primary"
-                                onClick={submitNewStallholder}
-                            >
-                                Add Stallholder
-                            </button>
-                        </div>
-                        <div className="col-auto">
-                            <button
-                                type="button"
-                                className="btn btn-secondary"
-                                onClick={clearFields}
-                            >
-                                Clear
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     );

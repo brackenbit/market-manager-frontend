@@ -10,20 +10,15 @@
 import { useOktaAuth } from "@okta/okta-react";
 import StallholderModel from "../../models/StallholderModel";
 import { useEffect, useState } from "react";
-import StallholderCategoryModel from "../../models/StallholderCategoryModel";
 import { SpinnerLoading } from "./SpinnerLoading";
 import { StallholderListSearchBar } from "./StallholderListSearchBar";
 import { Pagination } from "./Pagination";
+import useStallholderCategories from "../../CustomHooks/useStallholderCategories";
 
 export const StallholderList: React.FC<{ onClickFunction: any }> = (props) => {
     const { authState } = useOktaAuth();
     const [stallholders, setStallholders] = useState<StallholderModel[]>([]);
-    const [stallholderCategories, setStallholderCategories] = useState<
-        StallholderCategoryModel[]
-    >([]);
     const [isLoadingStallholders, setIsLoadingStallholders] = useState(true);
-    const [isLoadingStallholderCategories, setIsLoadingStallholderCategories] =
-        useState(true);
     const [httpError, setHttpError] = useState(null);
     const [totalNumberOfStallholders, setTotalNumberOfStallholders] =
         useState(0);
@@ -35,6 +30,13 @@ export const StallholderList: React.FC<{ onClickFunction: any }> = (props) => {
     const [search, setSearch] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("Category");
     const [searchHandleChange, setSearchHandleChange] = useState(false);
+
+    // Use custom hook for stallholder categories
+    const {
+        stallholderCategories,
+        isLoadingStallholderCategories,
+        httpErrorStallholderCategories,
+    } = useStallholderCategories();
 
     // useEffect - fetchStallholders
     // Load stallholder data, based on selected search term / category
@@ -124,57 +126,6 @@ export const StallholderList: React.FC<{ onClickFunction: any }> = (props) => {
         window.scrollTo(0, 0);
     }, [searchHandleChange, currentPage]);
 
-    // useEffect - fetchStallholderCategories
-    // Load list of (authoritative) stallholder categories
-    // Used e.g. to populate category selection, and enforced on new stallholder creation.
-    // NOT enforced at DB level, or on existing stallholders.
-    // (Trade off to give flexibility/reliability at cost of (fixable) inconsistency.)
-    useEffect(() => {
-        const fetchStallholderCategories = async () => {
-            if (authState && authState.isAuthenticated) {
-                const url: string =
-                    "http://localhost:8080/api/stallholderCategories/search/findAllByOrderByNameAsc";
-
-                const requestOptions = {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
-                        "Content-Type": "application/json",
-                    },
-                };
-
-                const response = await fetch(url, requestOptions);
-                if (!response.ok) {
-                    throw new Error("Failed to fetch stallholder categories");
-                }
-
-                const responseJson = await response.json();
-                const responseData =
-                    responseJson._embedded.stallholderCategories;
-
-                // Load retrieved data into an array of StallholderCategoryModel
-                const loadedStallholderCategories: StallholderCategoryModel[] =
-                    [];
-                for (const key in responseData) {
-                    loadedStallholderCategories.push({
-                        id: responseData[key].id,
-                        name: responseData[key].name,
-                    });
-                }
-                setStallholderCategories(loadedStallholderCategories);
-            }
-
-            setIsLoadingStallholderCategories(false);
-        };
-
-        fetchStallholderCategories().catch((error: any) => {
-            // Error encountered - stop loading and set HTTP error
-            setIsLoadingStallholderCategories(false);
-            setHttpError(error.message);
-        });
-        window.scrollTo(0, 0);
-    }, []);
-
     // useEffect - handleCategoryChange
     // On a change to selected category:
     // - clear the search input (change of category most often implies starting new search)
@@ -194,6 +145,16 @@ export const StallholderList: React.FC<{ onClickFunction: any }> = (props) => {
 
     if (isLoadingStallholders || isLoadingStallholderCategories) {
         return <SpinnerLoading />;
+    }
+
+    if (httpErrorStallholderCategories) {
+        return (
+            <div className="container m-5">
+                <div className="alert alert-danger">
+                    {httpErrorStallholderCategories}
+                </div>
+            </div>
+        );
     }
 
     if (httpError) {
@@ -228,10 +189,10 @@ export const StallholderList: React.FC<{ onClickFunction: any }> = (props) => {
                             >
                                 <div className="container-fluid">
                                     <div className="row">
-                                        <div className="col-4">
+                                        <div className="col">
                                             {stallholder.name}
                                         </div>
-                                        <div className="col-4">
+                                        <div className="col">
                                             {stallholder.category}
                                         </div>
                                     </div>

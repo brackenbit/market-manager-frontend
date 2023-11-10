@@ -8,69 +8,27 @@
  * TODO - In future, will show e.g. financial summary, attendance pattern.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import StallholderModel from "../../models/StallholderModel";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
-import { useOktaAuth } from "@okta/okta-react";
+import useStallholderDetail from "../../CustomHooks/useStallholderDetail";
 
 export const StallholderPage = () => {
-    const { authState } = useOktaAuth();
-    const [stallholder, setStallholder] = useState<StallholderModel>();
-    const [isLoading, setIsLoading] = useState(true);
-    const [httpError, setHttpError] = useState(null);
-
     // Extract stallholder id from path
-    const stallholderId = window.location.pathname.split("/")[2];
+    const stallholderId = Number(window.location.pathname.split("/")[2]);
 
-    useEffect(() => {
-        const fetchStallholder = async () => {
-            const url: string = `http://localhost:8080/api/stallholders/${stallholderId}`;
-            const requestOptions = {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
-                    "Content-Type": `application/json`,
-                },
-            };
+    // Use custom hook for stallholder detail
+    const { stallholder, isLoadingStallholder, httpErrorStallholder } =
+        useStallholderDetail(stallholderId);
 
-            const response = await fetch(url, requestOptions);
-            if (!response.ok) {
-                throw new Error("Failed to fetch stallholder data");
-            }
-
-            const responseJson = await response.json();
-
-            const loadedStallholder: StallholderModel = {
-                id: responseJson.id,
-                name: responseJson.name,
-                category: responseJson.category,
-                contactName: responseJson.contactName,
-                preferredName: responseJson.preferredName,
-                phone: responseJson.phone,
-                email: responseJson.email,
-                regular: responseJson.regular,
-                stallSize: responseJson.stallSize,
-                characteristics: responseJson.characteristics,
-            };
-
-            setStallholder(loadedStallholder);
-            setIsLoading(false);
-        };
-
-        fetchStallholder().catch((error: any) => {
-            setIsLoading(false);
-            setHttpError(error.message);
-        });
-    }, []);
-
-    if (isLoading) {
+    if (isLoadingStallholder) {
         return <SpinnerLoading />;
     }
 
-    if (httpError) {
+    if (httpErrorStallholder) {
         return (
             <div className="container m-5">
-                <div className="alert alert-danger">{httpError}</div>
+                <div className="alert alert-danger">{httpErrorStallholder}</div>
             </div>
         );
     }
