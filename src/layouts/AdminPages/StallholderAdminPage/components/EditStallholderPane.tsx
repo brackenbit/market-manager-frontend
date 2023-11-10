@@ -15,21 +15,32 @@ import { EditStallholderFields } from "./EditStallholderFields";
 import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
 import useStallholderDetail from "../../../../CustomHooks/useStallholderDetail";
 import useStallholderCategories from "../../../../CustomHooks/useStallholderCategories";
+import StallholderModel from "../../../../models/StallholderModel";
 
 export const EditStallholderPane = () => {
     // Display flags
     const [displayWarning, setDisplayWarning] = useState(false);
     const [displaySuccess, setDisplaySuccess] = useState(false);
-    // Stallholder info input fields
-    const [stallName, setStallName] = useState("");
-    const [category, setCategory] = useState("Category *");
-    const [contactName, setContactName] = useState("");
-    const [preferredName, setPreferredName] = useState("");
-    const [phone, setPhone] = useState("");
-    const [email, setEmail] = useState("");
-    const [regular, setRegular] = useState(false);
-    const [stallSize, setStallSize] = useState(1);
-    const [characteristics, setCharacteristics] = useState("");
+
+    // Stallholder info
+    // Define blankStallholder for initial load:
+    const blankStallholder: StallholderModel = {
+        id: 0,
+        name: "",
+        category: "Category *",
+        contactName: "",
+        preferredName: "",
+        phone: "",
+        email: "",
+        regular: false,
+        stallSize: 1,
+        characteristics: "",
+    };
+    // editedStallholder state may be changed as a result of either
+    // user changes to input fields, or loading new stallholder
+    const [editedStallholder, setEditedStallholder] =
+        useState<StallholderModel>(blankStallholder);
+
     // Use custom hooks for stallholder detail and categories
     const [selectedStallholderId, setSelectedStallholderId] = useState<
         number | null
@@ -42,6 +53,7 @@ export const EditStallholderPane = () => {
         httpErrorStallholderCategories,
     } = useStallholderCategories();
 
+    // On click on a stallholder in the list:
     function onStallholderClick(stallholderId: number) {
         // Set the selected stallholder:
         setSelectedStallholderId(stallholderId);
@@ -50,18 +62,10 @@ export const EditStallholderPane = () => {
     }
 
     // On change in isLoadingStallholder,
-    // update input fields if stallholder exists:
+    // Update editedStallholder to the new stallholder (if it exists)
     useEffect(() => {
         if (stallholder) {
-            setStallName(stallholder.name);
-            setCategory(stallholder.category);
-            setContactName(stallholder.contactName);
-            setPreferredName(stallholder.preferredName);
-            setPhone(stallholder.phone);
-            setEmail(stallholder.email);
-            setRegular(stallholder.regular);
-            setStallSize(stallholder.stallSize);
-            setCharacteristics(stallholder.characteristics);
+            setEditedStallholder(stallholder);
         }
     }, [isLoadingStallholder]);
 
@@ -100,24 +104,8 @@ export const EditStallholderPane = () => {
                     <h5>Stallholder ID: {stallholder?.id}</h5>
                     <EditStallholderFields
                         stallholderCategories={stallholderCategories}
-                        stallName={stallName}
-                        setStallName={setStallName}
-                        category={category}
-                        setCategory={setCategory}
-                        contactName={contactName}
-                        setContactName={setContactName}
-                        preferredName={preferredName}
-                        setPreferredName={setPreferredName}
-                        phone={phone}
-                        setPhone={setPhone}
-                        email={email}
-                        setEmail={setEmail}
-                        regular={regular}
-                        setRegular={setRegular}
-                        stallSize={stallSize}
-                        setStallSize={setStallSize}
-                        characteristics={characteristics}
-                        setCharacteristics={setCharacteristics}
+                        stallholder={editedStallholder}
+                        setStallholder={setEditedStallholder}
                     />
                 </div>
             </div>

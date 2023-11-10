@@ -1,34 +1,34 @@
 /*
  * Market Manager
  * (C) Brackenbit 2023
+ *
+ * EditStallholderFields
+ * Reusable form for editing stallholder attributes.
  */
 
 import StallholderCategoryModel from "../../../../models/StallholderCategoryModel";
+import StallholderModel from "../../../../models/StallholderModel";
 
 export const EditStallholderFields: React.FC<{
     stallholderCategories: StallholderCategoryModel[];
-
-    // TODO - passing this many props has a bad code smell,
-    // but I don't want to pack too many changes into one commit.
-    stallName: string;
-    setStallName: any;
-    category: string;
-    setCategory: any;
-    contactName: string;
-    setContactName: any;
-    preferredName: string;
-    setPreferredName: any;
-    phone: string;
-    setPhone: any;
-    email: string;
-    setEmail: any;
-    regular: boolean;
-    setRegular: any;
-    stallSize: number;
-    setStallSize: any;
-    characteristics: string;
-    setCharacteristics: any;
+    stallholder: StallholderModel;
+    setStallholder: any;
 }> = (props) => {
+    // Handle change in input fields
+    // (Category dropdown is handled separately below.)
+    function handleChange(e: any) {
+        let value;
+        if (e.target.type === "checkbox") {
+            value = e.target.checked;
+        } else {
+            value = e.target.value;
+        }
+        props.setStallholder({
+            ...props.stallholder,
+            [e.target.name]: value,
+        });
+    }
+
     return (
         <div className="">
             <form method="POST">
@@ -38,10 +38,11 @@ export const EditStallholderFields: React.FC<{
                         type="text"
                         className="form-control"
                         id="stallNameInput"
+                        name="name"
                         placeholder="" // Bootstrap floating label requires placeholder present
                         required
-                        onChange={(e) => props.setStallName(e.target.value)}
-                        value={props.stallName}
+                        onChange={handleChange}
+                        value={props.stallholder.name}
                     />
                     <label htmlFor="stallNameInput">Stall Name *</label>
                 </div>
@@ -55,7 +56,7 @@ export const EditStallholderFields: React.FC<{
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                         >
-                            {props.category}
+                            {props.stallholder.category}
                         </button>
                         <ul
                             className="dropdown-menu"
@@ -70,9 +71,11 @@ export const EditStallholderFields: React.FC<{
                                             className="dropdown-item"
                                             href="#"
                                             onClick={() =>
-                                                props.setCategory(
-                                                    stallholderCategory.name
-                                                )
+                                                props.setStallholder({
+                                                    ...props.stallholder,
+                                                    category:
+                                                        stallholderCategory.name,
+                                                })
                                             }
                                         >
                                             {stallholderCategory.name}
@@ -89,10 +92,11 @@ export const EditStallholderFields: React.FC<{
                         type="text"
                         className="form-control"
                         id="contactNameInput"
+                        name="contactName"
                         placeholder=""
                         required
-                        onChange={(e) => props.setContactName(e.target.value)}
-                        value={props.contactName}
+                        onChange={handleChange}
+                        value={props.stallholder.contactName}
                     />
                     <label htmlFor="contactNameInput">Contact Name *</label>
                 </div>
@@ -102,10 +106,11 @@ export const EditStallholderFields: React.FC<{
                         type="text"
                         className="form-control"
                         id="preferredNameInput"
+                        name="preferredName"
                         placeholder=""
                         required
-                        onChange={(e) => props.setPreferredName(e.target.value)}
-                        value={props.preferredName}
+                        onChange={handleChange}
+                        value={props.stallholder.preferredName}
                     />
                     <label htmlFor="preferredNameInput">Preferred Name</label>
                 </div>
@@ -115,10 +120,11 @@ export const EditStallholderFields: React.FC<{
                         type="text"
                         className="form-control"
                         id="phoneInput"
+                        name="phone"
                         placeholder=""
                         required
-                        onChange={(e) => props.setPhone(e.target.value)}
-                        value={props.phone}
+                        onChange={handleChange}
+                        value={props.stallholder.phone}
                     />
                     <label htmlFor="phoneInput">Phone *</label>
                 </div>
@@ -128,10 +134,11 @@ export const EditStallholderFields: React.FC<{
                         type="email"
                         className="form-control"
                         id="emailInput"
+                        name="email"
                         placeholder=""
                         required
-                        onChange={(e) => props.setEmail(e.target.value)}
-                        value={props.email}
+                        onChange={handleChange}
+                        value={props.stallholder.email}
                     />
                     <label htmlFor="emailInput">Email *</label>
                 </div>
@@ -142,9 +149,10 @@ export const EditStallholderFields: React.FC<{
                         type="checkbox"
                         value=""
                         id="regularCheckbox"
+                        name="regular"
                         // TODO - receiving warning although this works perfectly:
-                        checked={props.regular}
-                        onClick={() => props.setRegular(!props.regular)}
+                        checked={props.stallholder.regular}
+                        onClick={handleChange}
                     />
                     <label
                         className="form-check-label"
@@ -159,12 +167,11 @@ export const EditStallholderFields: React.FC<{
                         type="number"
                         className="form-control"
                         id="stallSizeInput"
+                        name="stallSize"
                         placeholder=""
                         required
-                        onChange={(e) =>
-                            props.setStallSize(Number(e.target.value))
-                        }
-                        value={props.stallSize}
+                        onChange={handleChange}
+                        value={props.stallholder.stallSize}
                     />
                     <label htmlFor="stallSizeInput">Stall Size</label>
                 </div>
@@ -175,12 +182,11 @@ export const EditStallholderFields: React.FC<{
                         type="text"
                         className="form-control"
                         id="characteristicsInput"
+                        name="characteristics"
                         placeholder=""
                         required
-                        onChange={(e) =>
-                            props.setCharacteristics(e.target.value)
-                        }
-                        value={props.characteristics}
+                        onChange={handleChange}
+                        value={props.stallholder.characteristics}
                     />
                     <label htmlFor="characteristicsInput">
                         Characteristics

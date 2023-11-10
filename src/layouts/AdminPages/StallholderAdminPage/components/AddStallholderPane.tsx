@@ -9,22 +9,31 @@ import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
 import AddStallholderRequest from "../../../../models/AddStallholderRequest";
 import { EditStallholderFields } from "./EditStallholderFields";
 import useStallholderCategories from "../../../../CustomHooks/useStallholderCategories";
+import StallholderModel from "../../../../models/StallholderModel";
 
 export const AddStallholderPane = () => {
     const { authState } = useOktaAuth();
     // Display flags
     const [displayWarning, setDisplayWarning] = useState(false);
     const [displaySuccess, setDisplaySuccess] = useState(false);
+
     // Stallholder info
-    const [stallName, setStallName] = useState("");
-    const [category, setCategory] = useState("Category *");
-    const [contactName, setContactName] = useState("");
-    const [preferredName, setPreferredName] = useState("");
-    const [phone, setPhone] = useState("");
-    const [email, setEmail] = useState("");
-    const [regular, setRegular] = useState(false);
-    const [stallSize, setStallSize] = useState(1);
-    const [characteristics, setCharacteristics] = useState("");
+    // Define blankStallholder for initial load and clearFields():
+    const blankStallholder: StallholderModel = {
+        id: 0, // id not used by this component
+        name: "",
+        category: "Category *",
+        contactName: "",
+        preferredName: "",
+        phone: "",
+        email: "",
+        regular: false,
+        stallSize: 1,
+        characteristics: "",
+    };
+    const [stallholder, setStallholder] =
+        useState<StallholderModel>(blankStallholder);
+
     // Use custom hook for stallholder categories
     const {
         stallholderCategories,
@@ -33,15 +42,7 @@ export const AddStallholderPane = () => {
     } = useStallholderCategories();
 
     function clearFields() {
-        setStallName("");
-        setCategory("Category");
-        setContactName("");
-        setPreferredName("");
-        setPhone("");
-        setEmail("");
-        setRegular(false);
-        setStallSize(1);
-        setCharacteristics("");
+        setStallholder(blankStallholder);
     }
 
     async function submitNewStallholder() {
@@ -49,24 +50,24 @@ export const AddStallholderPane = () => {
         // Only proceed if authenticated and required fields are filled
         if (
             authState?.isAuthenticated &&
-            stallName !== "" &&
-            category !== "Category" &&
-            contactName !== "" &&
-            phone !== "" &&
-            email !== ""
+            stallholder.name !== "" &&
+            stallholder.category !== "Category" &&
+            stallholder.contactName !== "" &&
+            stallholder.phone !== "" &&
+            stallholder.email !== ""
         ) {
             // Create new AddStallholderRequest with the entered data
             const newStallholder: AddStallholderRequest =
                 new AddStallholderRequest(
-                    stallName,
-                    category,
-                    contactName,
-                    preferredName,
-                    phone,
-                    email,
-                    regular,
-                    stallSize,
-                    characteristics
+                    stallholder.name,
+                    stallholder.category,
+                    stallholder.contactName,
+                    stallholder.preferredName,
+                    stallholder.phone,
+                    stallholder.email,
+                    stallholder.regular,
+                    stallholder.stallSize,
+                    stallholder.characteristics
                 );
 
             // Set up request options for the imminent POST request
@@ -121,7 +122,7 @@ export const AddStallholderPane = () => {
             )}
             {displayWarning && (
                 <div className="alert alert-warning" role="alert">
-                    Please fill out required fields
+                    Please fill out required fields (*)
                 </div>
             )}
 
@@ -133,24 +134,8 @@ export const AddStallholderPane = () => {
             <div className="">
                 <EditStallholderFields
                     stallholderCategories={stallholderCategories}
-                    stallName={stallName}
-                    setStallName={setStallName}
-                    category={category}
-                    setCategory={setCategory}
-                    contactName={contactName}
-                    setContactName={setContactName}
-                    preferredName={preferredName}
-                    setPreferredName={setPreferredName}
-                    phone={phone}
-                    setPhone={setPhone}
-                    email={email}
-                    setEmail={setEmail}
-                    regular={regular}
-                    setRegular={setRegular}
-                    stallSize={stallSize}
-                    setStallSize={setStallSize}
-                    characteristics={characteristics}
-                    setCharacteristics={setCharacteristics}
+                    stallholder={stallholder}
+                    setStallholder={setStallholder}
                 />
 
                 {/* Bottom buttons */}
