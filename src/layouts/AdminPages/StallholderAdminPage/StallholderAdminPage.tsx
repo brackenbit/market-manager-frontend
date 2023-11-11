@@ -6,8 +6,40 @@
 import { AddStallholderPane } from "./components/AddStallholderPane";
 import { EditStallholderPane } from "./components/EditStallholderPane";
 import { ArchiveStallholderPane } from "./components/ArchiveStallholderPane";
+import { useOktaAuth } from "@okta/okta-react";
+import { useState } from "react";
+import { Redirect } from "react-router-dom";
 
 export const StallholderAdminPage = () => {
+    const { authState } = useOktaAuth();
+    // Toggled to force reload of components when tabs are changed:
+    const [addTabActive, setAddTabActive] = useState(true);
+    const [editTabActive, setEditTabActive] = useState(false);
+    const [archiveTabActive, setArchiveTabActive] = useState(false);
+
+    function addTabClicked() {
+        setAddTabActive(true);
+        setEditTabActive(false);
+        setArchiveTabActive(false);
+    }
+
+    function editTabClicked() {
+        setAddTabActive(false);
+        setEditTabActive(true);
+        setArchiveTabActive(false);
+    }
+
+    function archiveTabClicked() {
+        setAddTabActive(false);
+        setEditTabActive(false);
+        setArchiveTabActive(true);
+    }
+
+    // Redirect back to home if not admin
+    if (authState?.accessToken?.claims.userType !== "admin") {
+        return <Redirect to={"/home"} />;
+    }
+
     return (
         <div className="container mt-3">
             {/* TODO - will be replaced with breadcrumbs */}
@@ -24,6 +56,7 @@ export const StallholderAdminPage = () => {
                         role="tab"
                         aria-controls="nav-add-stallholder-tab"
                         aria-selected="true"
+                        onClick={addTabClicked}
                     >
                         Add Stallholder
                     </button>
@@ -36,6 +69,7 @@ export const StallholderAdminPage = () => {
                         role="tab"
                         aria-controls="nav-edit-stallholder-tab"
                         aria-selected="false"
+                        onClick={editTabClicked}
                     >
                         Edit Stallholder
                     </button>
@@ -48,6 +82,7 @@ export const StallholderAdminPage = () => {
                         role="tab"
                         aria-controls="nav-archive-stallholder-tab"
                         aria-selected="false"
+                        onClick={archiveTabClicked}
                     >
                         Archive Stallholder
                     </button>
@@ -61,7 +96,7 @@ export const StallholderAdminPage = () => {
                     role="tabpanel"
                     aria-labelledby="nav-add-stallholder-tab"
                 >
-                    <AddStallholderPane />
+                    {addTabActive ? <AddStallholderPane /> : <></>}
                 </div>
                 <div
                     className="tab-pane fade"
@@ -69,7 +104,7 @@ export const StallholderAdminPage = () => {
                     role="tabpanel"
                     aria-labelledby="nav-edit-stallholder-tab"
                 >
-                    <EditStallholderPane />
+                    {editTabActive ? <EditStallholderPane /> : <></>}
                 </div>
                 <div
                     className="tab-pane fade"
@@ -77,7 +112,7 @@ export const StallholderAdminPage = () => {
                     role="tabpanel"
                     aria-labelledby="nav-archive-stallholder-tab"
                 >
-                    <ArchiveStallholderPane />
+                    {archiveTabActive ? <ArchiveStallholderPane /> : <></>}
                 </div>
             </div>
         </div>
