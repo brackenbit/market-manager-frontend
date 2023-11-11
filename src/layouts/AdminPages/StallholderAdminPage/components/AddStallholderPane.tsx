@@ -6,7 +6,7 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { useState } from "react";
 import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
-import AddStallholderRequest from "../../../../models/AddStallholderRequest";
+import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
 import { EditStallholderFields } from "./EditStallholderFields";
 import useStallholderCategories from "../../../../CustomHooks/useStallholderCategories";
 import StallholderModel from "../../../../models/StallholderModel";
@@ -19,8 +19,7 @@ export const AddStallholderPane = () => {
 
     // Stallholder info
     // Define blankStallholder for initial load and clearFields():
-    const blankStallholder: StallholderModel = {
-        id: 0, // id not used by this component
+    const blankStallholder: StallholderAttributeRequest = {
         name: "",
         category: "Category *",
         contactName: "",
@@ -31,8 +30,8 @@ export const AddStallholderPane = () => {
         stallSize: 1,
         characteristics: "",
     };
-    const [stallholder, setStallholder] =
-        useState<StallholderModel>(blankStallholder);
+    const [stallholderAttributes, setStallholderAttributes] =
+        useState<StallholderAttributeRequest>(blankStallholder);
 
     // Use custom hook for stallholder categories
     const {
@@ -42,33 +41,22 @@ export const AddStallholderPane = () => {
     } = useStallholderCategories();
 
     function clearFields() {
-        setStallholder(blankStallholder);
+        setStallholderAttributes(blankStallholder);
     }
 
+    // submitNewStallholder
+    // POST the new stallholder to the backend
     async function submitNewStallholder() {
-        const url = `http://localhost:8080/api/admin/add/stallholder`;
         // Only proceed if authenticated and required fields are filled
         if (
             authState?.isAuthenticated &&
-            stallholder.name !== "" &&
-            stallholder.category !== "Category" &&
-            stallholder.contactName !== "" &&
-            stallholder.phone !== "" &&
-            stallholder.email !== ""
+            stallholderAttributes.name !== "" &&
+            stallholderAttributes.category !== "Category" &&
+            stallholderAttributes.contactName !== "" &&
+            stallholderAttributes.phone !== "" &&
+            stallholderAttributes.email !== ""
         ) {
-            // Create new AddStallholderRequest with the entered data
-            const newStallholder: AddStallholderRequest =
-                new AddStallholderRequest(
-                    stallholder.name,
-                    stallholder.category,
-                    stallholder.contactName,
-                    stallholder.preferredName,
-                    stallholder.phone,
-                    stallholder.email,
-                    stallholder.regular,
-                    stallholder.stallSize,
-                    stallholder.characteristics
-                );
+            const url = `http://localhost:8080/api/admin/add/stallholder`;
 
             // Set up request options for the imminent POST request
             const requestOptions = {
@@ -77,7 +65,7 @@ export const AddStallholderPane = () => {
                     Authorization: `Bearer ${authState.accessToken?.accessToken}`,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(newStallholder),
+                body: JSON.stringify(stallholderAttributes),
             };
 
             // Make POST request
@@ -134,8 +122,8 @@ export const AddStallholderPane = () => {
             <div className="">
                 <EditStallholderFields
                     stallholderCategories={stallholderCategories}
-                    stallholder={stallholder}
-                    setStallholder={setStallholder}
+                    stallholderAttributes={stallholderAttributes}
+                    setStallholderAttributes={setStallholderAttributes}
                 />
 
                 {/* Bottom buttons */}

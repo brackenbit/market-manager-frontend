@@ -5,8 +5,6 @@
  * EditStallholderPane
  * Choose from a (searchable) list of stallholders, and make changes to a stallholder
  * using a form of input fields.
- *
- * TODO - Partially functional GUI; changes can't be submitted to back end at this stage.
  */
 
 import { useEffect, useState } from "react";
@@ -16,16 +14,18 @@ import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
 import useStallholderDetail from "../../../../CustomHooks/useStallholderDetail";
 import useStallholderCategories from "../../../../CustomHooks/useStallholderCategories";
 import StallholderModel from "../../../../models/StallholderModel";
+import { useOktaAuth } from "@okta/okta-react";
+import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
 
 export const EditStallholderPane = () => {
+    const { authState } = useOktaAuth();
     // Display flags
     const [displayWarning, setDisplayWarning] = useState(false);
     const [displaySuccess, setDisplaySuccess] = useState(false);
 
     // Stallholder info
     // Define blankStallholder for initial load:
-    const blankStallholder: StallholderModel = {
-        id: 0,
+    const blankStallholder: StallholderAttributeRequest = {
         name: "",
         category: "Category *",
         contactName: "",
@@ -39,7 +39,10 @@ export const EditStallholderPane = () => {
     // editedStallholder state may be changed as a result of either
     // user changes to input fields, or loading new stallholder
     const [editedStallholder, setEditedStallholder] =
-        useState<StallholderModel>(blankStallholder);
+        useState<StallholderAttributeRequest>(blankStallholder);
+
+    // Toggle to reset manual changes
+    const [cancelChanges, setCancelChanges] = useState(false);
 
     // Use custom hooks for stallholder detail and categories
     const [selectedStallholderId, setSelectedStallholderId] = useState<
@@ -62,12 +65,66 @@ export const EditStallholderPane = () => {
     }
 
     // On change in isLoadingStallholder,
-    // Update editedStallholder to the new stallholder (if it exists)
+    // Update editedStallholder to new stallholder data (if it exists)
     useEffect(() => {
         if (stallholder) {
-            setEditedStallholder(stallholder);
+            const newStallholder: StallholderAttributeRequest =
+                new StallholderAttributeRequest(
+                    stallholder.name,
+                    stallholder.category,
+                    stallholder.contactName,
+                    stallholder.preferredName,
+                    stallholder.phone,
+                    stallholder.email,
+                    stallholder.regular,
+                    stallholder.stallSize,
+                    stallholder.characteristics
+                );
+            setEditedStallholder(newStallholder);
         }
-    }, [isLoadingStallholder]);
+    }, [isLoadingStallholder, cancelChanges]);
+
+    // editStallholder
+    // POST the updated stallholder to the backend
+    async function editStallholder() {
+        // Only proceed if authenticated and required fields are filled
+        if (
+            authState?.isAuthenticated &&
+            editedStallholder.name !== "" &&
+            editedStallholder.category !== "Category" &&
+            editedStallholder.contactName !== "" &&
+            editedStallholder.phone !== "" &&
+            editedStallholder.email !== ""
+        ) {
+            const url = `http://localhost:8080/api/admin/edit/stallholder/?stallholderId=${selectedStallholderId}`;
+
+            // Set up request options for the imminent POST request
+            const requestOptions = {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(editedStallholder),
+            };
+
+            // Make POST request
+            const submitNewStallholderResponse = await fetch(
+                url,
+                requestOptions
+            );
+            if (!submitNewStallholderResponse.ok) {
+                throw new Error("Something went wrong!");
+            }
+            // Display success
+            setDisplayWarning(false);
+            setDisplaySuccess(true);
+        } else {
+            // Display warning
+            setDisplayWarning(true);
+            setDisplaySuccess(false);
+        }
+    }
 
     if (isLoadingStallholderCategories) {
         return <SpinnerLoading />;
@@ -96,6 +153,16 @@ export const EditStallholderPane = () => {
             <div className="alert alert-warning my-3">
                 Currently under construction.
             </div>
+            {displaySuccess && (
+                <div className="alert alert-success" role="alert">
+                    Stallholder edited successfully
+                </div>
+            )}
+            {displayWarning && (
+                <div className="alert alert-warning" role="alert">
+                    Please fill out required fields (*)
+                </div>
+            )}
             <div className="row">
                 <div className="col-6">
                     <StallholderList onClickFunction={onStallholderClick} />
@@ -104,9 +171,31 @@ export const EditStallholderPane = () => {
                     <h5>Stallholder ID: {stallholder?.id}</h5>
                     <EditStallholderFields
                         stallholderCategories={stallholderCategories}
-                        stallholder={editedStallholder}
-                        setStallholder={setEditedStallholder}
+                        stallholderAttributes={editedStallholder}
+                        setStallholderAttributes={setEditedStallholder}
                     />
+                    {/* Bottom buttons */}
+                    <div className="row mt-3">
+                        <div className="col"></div>
+                        <div className="col-auto">
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={editStallholder}
+                            >
+                                Edit Stallholder
+                            </button>
+                        </div>
+                        <div className="col-auto">
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                onClick={() => setCancelChanges(!cancelChanges)}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -6,13 +6,14 @@
  * Reusable form for editing stallholder attributes.
  */
 
+import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
 import StallholderCategoryModel from "../../../../models/StallholderCategoryModel";
 import StallholderModel from "../../../../models/StallholderModel";
 
 export const EditStallholderFields: React.FC<{
     stallholderCategories: StallholderCategoryModel[];
-    stallholder: StallholderModel;
-    setStallholder: any;
+    stallholderAttributes: StallholderAttributeRequest;
+    setStallholderAttributes: any;
 }> = (props) => {
     // Handle change in input fields
     // (Category dropdown is handled separately below.)
@@ -23,8 +24,8 @@ export const EditStallholderFields: React.FC<{
         } else {
             value = e.target.value;
         }
-        props.setStallholder({
-            ...props.stallholder,
+        props.setStallholderAttributes({
+            ...props.stallholderAttributes,
             [e.target.name]: value,
         });
     }
@@ -42,7 +43,7 @@ export const EditStallholderFields: React.FC<{
                         placeholder="" // Bootstrap floating label requires placeholder present
                         required
                         onChange={handleChange}
-                        value={props.stallholder.name}
+                        value={props.stallholderAttributes.name}
                     />
                     <label htmlFor="stallNameInput">Stall Name *</label>
                 </div>
@@ -56,7 +57,7 @@ export const EditStallholderFields: React.FC<{
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                         >
-                            {props.stallholder.category}
+                            {props.stallholderAttributes.category}
                         </button>
                         <ul
                             className="dropdown-menu"
@@ -71,8 +72,8 @@ export const EditStallholderFields: React.FC<{
                                             className="dropdown-item"
                                             href="#"
                                             onClick={() =>
-                                                props.setStallholder({
-                                                    ...props.stallholder,
+                                                props.setStallholderAttributes({
+                                                    ...props.stallholderAttributes,
                                                     category:
                                                         stallholderCategory.name,
                                                 })
@@ -96,7 +97,7 @@ export const EditStallholderFields: React.FC<{
                         placeholder=""
                         required
                         onChange={handleChange}
-                        value={props.stallholder.contactName}
+                        value={props.stallholderAttributes.contactName}
                     />
                     <label htmlFor="contactNameInput">Contact Name *</label>
                 </div>
@@ -110,7 +111,7 @@ export const EditStallholderFields: React.FC<{
                         placeholder=""
                         required
                         onChange={handleChange}
-                        value={props.stallholder.preferredName}
+                        value={props.stallholderAttributes.preferredName}
                     />
                     <label htmlFor="preferredNameInput">Preferred Name</label>
                 </div>
@@ -124,7 +125,7 @@ export const EditStallholderFields: React.FC<{
                         placeholder=""
                         required
                         onChange={handleChange}
-                        value={props.stallholder.phone}
+                        value={props.stallholderAttributes.phone}
                     />
                     <label htmlFor="phoneInput">Phone *</label>
                 </div>
@@ -138,7 +139,7 @@ export const EditStallholderFields: React.FC<{
                         placeholder=""
                         required
                         onChange={handleChange}
-                        value={props.stallholder.email}
+                        value={props.stallholderAttributes.email}
                     />
                     <label htmlFor="emailInput">Email *</label>
                 </div>
@@ -151,7 +152,7 @@ export const EditStallholderFields: React.FC<{
                         id="regularCheckbox"
                         name="regular"
                         // TODO - receiving warning although this works perfectly:
-                        checked={props.stallholder.regular}
+                        checked={props.stallholderAttributes.regular}
                         onClick={handleChange}
                     />
                     <label
@@ -171,7 +172,7 @@ export const EditStallholderFields: React.FC<{
                         placeholder=""
                         required
                         onChange={handleChange}
-                        value={props.stallholder.stallSize}
+                        value={props.stallholderAttributes.stallSize}
                     />
                     <label htmlFor="stallSizeInput">Stall Size</label>
                 </div>
@@ -186,7 +187,7 @@ export const EditStallholderFields: React.FC<{
                         placeholder=""
                         required
                         onChange={handleChange}
-                        value={props.stallholder.characteristics}
+                        value={props.stallholderAttributes.characteristics}
                     />
                     <label htmlFor="characteristicsInput">
                         Characteristics
