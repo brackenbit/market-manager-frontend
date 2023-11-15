@@ -6,7 +6,6 @@
  * (Separated out for readability.)
  */
 
-import { useState } from "react";
 import StallholderCategoryModel from "../../models/StallholderCategoryModel";
 
 export const StallholderListSearchBar: React.FC<{
