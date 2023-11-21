@@ -86,7 +86,7 @@ function useStallholders(
             for (const key in responseData) {
                 loadedStallholders.push({
                     id: responseData[key].id,
-                    name: responseData[key].name,
+                    stallName: responseData[key].name,
                     category: responseData[key].category,
                     contactName: responseData[key].contactName,
                     preferredName: responseData[key].preferredName,

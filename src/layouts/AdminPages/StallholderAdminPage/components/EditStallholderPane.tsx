@@ -18,10 +18,10 @@ import StallholderAttributeRequest from "../../../../models/StallholderAttribute
 import useStallholders from "../../../../CustomHooks/useStallholders";
 import { StallholderListSearchBar } from "../../../Utils/StallholderListSearchBar";
 import { Pagination } from "../../../Utils/Pagination";
+import useCategoryDropdown from "../../../../CustomHooks/useCategoryDropdown";
 
 export const EditStallholderPane = () => {
     const { authState } = useOktaAuth();
-    const isInitialMount = useRef(true);
 
     // Display flags
     const [displayWarning, setDisplayWarning] = useState(false);
@@ -95,7 +95,7 @@ export const EditStallholderPane = () => {
         if (stallholder) {
             const newStallholder: StallholderAttributeRequest =
                 new StallholderAttributeRequest(
-                    stallholder.name,
+                    stallholder.stallName,
                     stallholder.category,
                     stallholder.contactName,
                     stallholder.preferredName,
@@ -109,33 +109,9 @@ export const EditStallholderPane = () => {
         }
     }, [isLoadingStallholder, cancelChanges]);
 
-    // useEffect to handle category changes
-    useEffect(() => {
-        // Ignore on initialMount
-        if (isInitialMount.current) {
-            isInitialMount.current = false;
-        } else if (search !== "") {
-            // If search is not blank, clear it,
-            // (change of category most often implies new search)
-            // and triggered _delayed_ fetchStallholders (see below)
-            setSearch("");
-            setDoDelayedFetch(true);
-        } else {
-            // If search is already blank, simply fetchStallholders.
-            fetchStallholders();
-        }
-    }, [selectedCategory]);
-
-    // useEffect to trigger delayed reload of stallholders
-    // Required when search has just been cleared, to prevent fetchStallholders
-    // being called with stale search state.
-    const [doDelayedFetch, setDoDelayedFetch] = useState(false);
-    useEffect(() => {
-        if (doDelayedFetch) {
-            fetchStallholders();
-            setDoDelayedFetch(false);
-        }
-    }, [search]);
+    // useCategoryDropdown hook
+    // (Implements logic to clear search and trigger fetch when category dropdown changes.)
+    useCategoryDropdown(search, setSearch, fetchStallholders, selectedCategory);
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 

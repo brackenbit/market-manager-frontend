@@ -7,7 +7,7 @@ class StallholderModel {
     // Using TS constructor shorthand:
     constructor(
         public id: number,
-        public name: string,
+        public stallName: string,
         public category: string,
         public contactName: string,
         public preferredName: string,

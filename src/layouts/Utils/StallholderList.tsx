@@ -30,7 +30,7 @@ export const StallholderList: React.FC<{
                                 <div className="container-fluid">
                                     <div className="row">
                                         <div className="col">
-                                            {stallholder.name}
+                                            {stallholder.stallName}
                                         </div>
                                         <div className="col">
                                             {stallholder.category}

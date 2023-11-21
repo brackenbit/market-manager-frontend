@@ -37,7 +37,7 @@ export const StallholderPage = () => {
         <div className="container mt-3">
             <div className="row">
                 <div className="col-12 col-md-6">
-                    <h1>{stallholder?.name}</h1>
+                    <h1>{stallholder?.stallName}</h1>
                 </div>
                 <div className="col-12 col-md-6">
                     <h2>Category: {stallholder?.category}</h2>
