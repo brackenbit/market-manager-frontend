@@ -1,6 +1,10 @@
 /*
  * Market Manager
  * (C) Brackenbit 2023
+ *
+ * StallholderAdminPage
+ * Provides tabs to select stallholder-related admin functions.
+ * Actual admin functions are provided by the dedicated components loaded in these tabs.
  */
 
 import { AddStallholderPane } from "./components/AddStallholderPane";
