@@ -14,11 +14,14 @@ import { StallholderListSearchBar } from "../Utils/StallholderListSearchBar";
 import useStallholderCategories from "../../CustomHooks/useStallholderCategories";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { Pagination } from "../Utils/Pagination";
-import useCategoryDropdown from "../../CustomHooks/useCategoryDropdown";
 
 export const StallholdersPage = () => {
     // useStallholders state/hook
-    const [search, setSearch] = useState("");
+    // searchEditing is dynamically changed by user
+    const [searchEditing, setSearchEditing] = useState("");
+    // searchSubmitted is updated (to equal searchEditing) only on explicit user action
+    // the useStallholders hook re-runs on change to searchSubmitted
+    const [searchSubmitted, setSearchSubmitted] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("Category");
     const [currentPage, setCurrentPage] = useState(1);
     const [stallholdersPerPage] = useState(12);
@@ -28,9 +31,8 @@ export const StallholdersPage = () => {
         httpErrorStallholders,
         totalNumberOfStallholders,
         totalPages,
-        fetchStallholders,
     } = useStallholders(
-        search,
+        searchSubmitted,
         selectedCategory,
         currentPage,
         stallholdersPerPage
@@ -49,7 +51,25 @@ export const StallholdersPage = () => {
 
     // useCategoryDropdown hook
     // (Implements logic to clear search and trigger fetch when category dropdown changes.)
-    useCategoryDropdown(search, setSearch, fetchStallholders, selectedCategory);
+    // useCategoryDropdown(search, setSearch, fetchStallholders, selectedCategory);
+
+    // onCategoryChange
+    // clear search fields and set category
+    // (Change of category most often indicates start of new search, so
+    //  clearing search fields improves usability.)
+    function onCategoryChange(newCategory: string) {
+        setSearchEditing("");
+        setSearchSubmitted("");
+        setSelectedCategory(newCategory);
+        setCurrentPage(1);
+    }
+
+    // handleSearch
+    // update searchSubmitted to reflect searchEditing
+    function handleSearch() {
+        setSearchSubmitted(searchEditing);
+        setCurrentPage(1);
+    }
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -73,12 +93,12 @@ export const StallholdersPage = () => {
     return (
         <div>
             <StallholderListSearchBar
-                search={search}
-                setSearch={setSearch}
-                searchClicked={fetchStallholders}
+                search={searchEditing}
+                setSearch={setSearchEditing}
+                searchClicked={handleSearch}
                 stallholderCategories={stallholderCategories}
                 selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
+                setSelectedCategory={onCategoryChange}
             />
             <StallholderList
                 stallholders={stallholders}

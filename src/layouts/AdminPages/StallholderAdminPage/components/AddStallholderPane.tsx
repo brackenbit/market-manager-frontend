@@ -20,7 +20,7 @@ export const AddStallholderPane = () => {
     // Stallholder info
     // Define blankStallholder for initial load and clearFields():
     const blankStallholder: StallholderAttributeRequest = {
-        name: "",
+        stallName: "",
         category: "Category *",
         contactName: "",
         preferredName: "",
@@ -50,7 +50,7 @@ export const AddStallholderPane = () => {
         // Only proceed if authenticated and required fields are filled
         if (
             authState?.isAuthenticated &&
-            stallholderAttributes.name !== "" &&
+            stallholderAttributes.stallName !== "" &&
             stallholderAttributes.category !== "Category" &&
             stallholderAttributes.contactName !== "" &&
             stallholderAttributes.phone !== "" &&

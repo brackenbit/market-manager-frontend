@@ -5,9 +5,6 @@
  * useStallholders
  * Custom hook for components which rely on a list of stallholders.
  * Inputs are used to return a searched list.
- * Note that reload is triggered only by pagination change.
- * A reload must be manually triggered using the returned fetchStallholders,
- * e.g. when search terms change.
  */
 
 import { useOktaAuth } from "@okta/okta-react";
@@ -110,7 +107,7 @@ function useStallholders(
             setHttpErrorStallholders(error.message);
         });
         window.scrollTo(0, 0);
-    }, [currentPage]); // Automatically refresh only on page change, manual trigger required e.g. after change in search
+    }, [currentPage, selectedCategory, search]);
 
     return {
         stallholders,
@@ -118,7 +115,6 @@ function useStallholders(
         httpErrorStallholders,
         totalNumberOfStallholders,
         totalPages,
-        fetchStallholders, // return fetchStallholders so that requests can be triggered manually
     };
 }
 

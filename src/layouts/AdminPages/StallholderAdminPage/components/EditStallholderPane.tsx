@@ -7,7 +7,7 @@
  * using a form.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { StallholderList } from "../../../Utils/StallholderList";
 import { EditStallholderFields } from "./EditStallholderFields";
 import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
@@ -18,9 +18,10 @@ import StallholderAttributeRequest from "../../../../models/StallholderAttribute
 import useStallholders from "../../../../CustomHooks/useStallholders";
 import { StallholderListSearchBar } from "../../../Utils/StallholderListSearchBar";
 import { Pagination } from "../../../Utils/Pagination";
-import useCategoryDropdown from "../../../../CustomHooks/useCategoryDropdown";
 
 export const EditStallholderPane = () => {
+    // State, custom hooks, and useEffect -----------------------------------
+    // Okta
     const { authState } = useOktaAuth();
 
     // Display flags
@@ -28,7 +29,11 @@ export const EditStallholderPane = () => {
     const [displaySuccess, setDisplaySuccess] = useState(false);
 
     // useStallholders state/hook
-    const [search, setSearch] = useState("");
+    // searchEditing is dynamically changed by user
+    const [searchEditing, setSearchEditing] = useState("");
+    // searchSubmitted is updated (to equal searchEditing) only on explicit user action
+    // the useStallholders hook re-runs on change to searchSubmitted
+    const [searchSubmitted, setSearchSubmitted] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("Category");
     const [currentPage, setCurrentPage] = useState(1);
     const [stallholdersPerPage] = useState(12);
@@ -38,20 +43,22 @@ export const EditStallholderPane = () => {
         httpErrorStallholders,
         totalNumberOfStallholders,
         totalPages,
-        fetchStallholders,
     } = useStallholders(
-        search,
+        searchSubmitted,
         selectedCategory,
         currentPage,
         stallholdersPerPage
     );
 
     // useStallholderDetail state/hook
-    const [selectedStallholderId, setSelectedStallholderId] = useState<
+    const [stallholderSelectedId, setStallholderSelectedId] = useState<
         number | null
     >(null);
-    const { stallholder, isLoadingStallholder, httpErrorStallholder } =
-        useStallholderDetail(selectedStallholderId);
+    const {
+        stallholder: stallholderSelectedModel,
+        isLoadingStallholder,
+        httpErrorStallholder,
+    } = useStallholderDetail(stallholderSelectedId);
 
     // useStallholderCategories hook
     const {
@@ -60,10 +67,10 @@ export const EditStallholderPane = () => {
         httpErrorStallholderCategories,
     } = useStallholderCategories();
 
-    // Stallholder info
-    // Define blankStallholder for initial load:
+    // Stallholder detail fields
+    // Define blankStallholder for initial state
     const blankStallholder: StallholderAttributeRequest = {
-        name: "",
+        stallName: "",
         category: "Category *",
         contactName: "",
         preferredName: "",
@@ -73,46 +80,74 @@ export const EditStallholderPane = () => {
         stallSize: 1,
         characteristics: "",
     };
-    // editedStallholder state may be changed as a result of either
-    // user changes to input fields, or loading new stallholder
-    const [editedStallholder, setEditedStallholder] =
+    // stallholderEdited reflects the input fields,
+    // i.e. may be dynamically changed by user,
+    // and is overwritten (with stallholderSelected) when loading a new stallholder
+    // or cancelling changes
+    const [stallholderEdited, setStallholderEdited] =
         useState<StallholderAttributeRequest>(blankStallholder);
 
-    // Toggle to reset manual changes
-    const [cancelChanges, setCancelChanges] = useState(false);
+    // stallholderSelected holds the current stallholder details returned from API
+    // NB: this is a StallholderAttributeRequest rather than StallholderModel
+    // model returned from API is converted by useEffect below
+    const [stallholderSelected, setStallholderSelected] =
+        useState<StallholderAttributeRequest>();
 
-    // On click on a stallholder in the list:
-    function onStallholderClick(stallholderId: number) {
-        setSelectedStallholderId(stallholderId);
-        // This triggers useStallholderDetail hook to reload.
-        // Update to input fields is triggered by useEffect below.
-    }
-
-    // On change in isLoadingStallholder,
-    // Update editedStallholder to new stallholder data (if it exists).
-    // Also triggered by cancelChanges, to revert to stallholder
+    // useEffect - update stallholderSelected and stallholderEdited
+    // when stallholderSelectedModel is updated
     useEffect(() => {
-        if (stallholder) {
+        if (stallholderSelectedModel) {
             const newStallholder: StallholderAttributeRequest =
                 new StallholderAttributeRequest(
-                    stallholder.stallName,
-                    stallholder.category,
-                    stallholder.contactName,
-                    stallholder.preferredName,
-                    stallholder.phone,
-                    stallholder.email,
-                    stallholder.regular,
-                    stallholder.stallSize,
-                    stallholder.characteristics
+                    stallholderSelectedModel.stallName,
+                    stallholderSelectedModel.category,
+                    stallholderSelectedModel.contactName,
+                    stallholderSelectedModel.preferredName,
+                    stallholderSelectedModel.phone,
+                    stallholderSelectedModel.email,
+                    stallholderSelectedModel.regular,
+                    stallholderSelectedModel.stallSize,
+                    stallholderSelectedModel.characteristics
                 );
-            setEditedStallholder(newStallholder);
+            setStallholderSelected(newStallholder);
+            setStallholderEdited(newStallholder);
         }
-    }, [isLoadingStallholder, cancelChanges]);
+    }, [stallholderSelectedModel]);
 
-    // useCategoryDropdown hook
-    // (Implements logic to clear search and trigger fetch when category dropdown changes.)
-    useCategoryDropdown(search, setSearch, fetchStallholders, selectedCategory);
+    // Functions ----------------------------------------------------------
 
+    // TODO - significant code duplication between here, StallholdersPage, ArchiveStallholderPane
+    // refactor needed, but want to commit this working update first.
+
+    // cancelChanges
+    // cancel changes made to stallholder details
+    function cancelChanges() {
+        // Revert stallholderEdited to stallholderSelected
+        if (stallholderSelected) {
+            setStallholderEdited(stallholderSelected);
+        }
+    }
+
+    // onCategoryChange
+    // clear search fields and set category
+    // (Change of category most often indicates start of new search, so
+    //  clearing search fields improves usability.)
+    function onCategoryChange(newCategory: string) {
+        setSearchEditing("");
+        setSearchSubmitted("");
+        setSelectedCategory(newCategory);
+        setCurrentPage(1);
+    }
+
+    // handleSearch
+    // update searchSubmitted to reflect searchEditing
+    function handleSearch() {
+        setSearchSubmitted(searchEditing);
+        setCurrentPage(1);
+    }
+
+    // paginate
+    // set current page number
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
     // editStallholder
@@ -121,13 +156,13 @@ export const EditStallholderPane = () => {
         // Only proceed if authenticated and required fields are filled
         if (
             authState?.isAuthenticated &&
-            editedStallholder.name !== "" &&
-            editedStallholder.category !== "Category" &&
-            editedStallholder.contactName !== "" &&
-            editedStallholder.phone !== "" &&
-            editedStallholder.email !== ""
+            stallholderEdited.stallName !== "" &&
+            stallholderEdited.category !== "Category" &&
+            stallholderEdited.contactName !== "" &&
+            stallholderEdited.phone !== "" &&
+            stallholderEdited.email !== ""
         ) {
-            const url = `http://localhost:8080/api/admin/edit/stallholder/?stallholderId=${selectedStallholderId}`;
+            const url = `http://localhost:8080/api/admin/edit/stallholder/?stallholderId=${stallholderSelectedId}`;
 
             // Set up request options for the imminent POST request
             const requestOptions = {
@@ -136,7 +171,7 @@ export const EditStallholderPane = () => {
                     Authorization: `Bearer ${authState.accessToken?.accessToken}`,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(editedStallholder),
+                body: JSON.stringify(stallholderEdited),
             };
 
             // Make POST request
@@ -150,8 +185,6 @@ export const EditStallholderPane = () => {
             // Display success
             setDisplayWarning(false);
             setDisplaySuccess(true);
-            // And update stallholders
-            fetchStallholders();
         } else {
             // Display warning
             setDisplayWarning(true);
@@ -203,16 +236,16 @@ export const EditStallholderPane = () => {
             <div className="row">
                 <div className="col-6">
                     <StallholderListSearchBar
-                        search={search}
-                        setSearch={setSearch}
-                        searchClicked={fetchStallholders}
+                        search={searchEditing}
+                        setSearch={setSearchEditing}
+                        searchClicked={handleSearch}
                         stallholderCategories={stallholderCategories}
                         selectedCategory={selectedCategory}
-                        setSelectedCategory={setSelectedCategory}
+                        setSelectedCategory={onCategoryChange}
                     />
                     <StallholderList
                         stallholders={stallholders}
-                        onClickFunction={onStallholderClick}
+                        onClickFunction={setStallholderSelectedId}
                     />
                     {totalPages > 1 && (
                         <Pagination
@@ -223,11 +256,11 @@ export const EditStallholderPane = () => {
                     )}
                 </div>
                 <div className="col-6">
-                    <h5>Stallholder ID: {stallholder?.id}</h5>
+                    <h5>Stallholder ID: {stallholderSelectedModel?.id}</h5>
                     <EditStallholderFields
                         stallholderCategories={stallholderCategories}
-                        stallholderAttributes={editedStallholder}
-                        setStallholderAttributes={setEditedStallholder}
+                        stallholderAttributes={stallholderEdited}
+                        setStallholderAttributes={setStallholderEdited}
                     />
                     {/* Bottom buttons */}
                     <div className="row mt-3">
@@ -245,7 +278,7 @@ export const EditStallholderPane = () => {
                             <button
                                 type="button"
                                 className="btn btn-secondary"
-                                onClick={() => setCancelChanges(!cancelChanges)}
+                                onClick={cancelChanges}
                             >
                                 Cancel
                             </button>

@@ -8,7 +8,6 @@
 
 import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
 import StallholderCategoryModel from "../../../../models/StallholderCategoryModel";
-import StallholderModel from "../../../../models/StallholderModel";
 
 export const EditStallholderFields: React.FC<{
     stallholderCategories: StallholderCategoryModel[];
@@ -43,7 +42,7 @@ export const EditStallholderFields: React.FC<{
                         placeholder="" // Bootstrap floating label requires placeholder present
                         required
                         onChange={handleChange}
-                        value={props.stallholderAttributes.name}
+                        value={props.stallholderAttributes.stallName}
                     />
                     <label htmlFor="stallNameInput">Stall Name *</label>
                 </div>
@@ -151,9 +150,8 @@ export const EditStallholderFields: React.FC<{
                         value=""
                         id="regularCheckbox"
                         name="regular"
-                        // TODO - receiving warning although this works perfectly:
                         checked={props.stallholderAttributes.regular}
-                        onClick={handleChange}
+                        onChange={handleChange}
                     />
                     <label
                         className="form-check-label"

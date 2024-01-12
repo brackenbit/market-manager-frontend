@@ -16,6 +16,14 @@ export const StallholderListSearchBar: React.FC<{
     selectedCategory: string;
     setSelectedCategory: any;
 }> = (props) => {
+    // handleEnter
+    // call searchClicked if Enter pressed in search field
+    function handleEnter(e: React.KeyboardEvent<HTMLInputElement>) {
+        if (e.key === "Enter") {
+            props.searchClicked();
+        }
+    }
+
     return (
         <div className="my-2">
             <div className="row">
@@ -28,6 +36,7 @@ export const StallholderListSearchBar: React.FC<{
                             aria-label="Search"
                             value={props.search}
                             onChange={(e) => props.setSearch(e.target.value)}
+                            onKeyDown={handleEnter}
                         />
                     </div>
                 </div>
