@@ -38,7 +38,7 @@ export const EditStallholderFields: React.FC<{
                         type="text"
                         className="form-control"
                         id="stallNameInput"
-                        name="name"
+                        name="stallName"
                         placeholder="" // Bootstrap floating label requires placeholder present
                         required
                         onChange={handleChange}

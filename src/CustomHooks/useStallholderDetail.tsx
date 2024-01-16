@@ -46,7 +46,7 @@ function useStallholderDetail(stallholderId: number | null) {
                 // Load retrieved data into a StallholderModel object
                 const loadedStallholder: StallholderModel = {
                     id: responseJson.id,
-                    stallName: responseJson.name,
+                    stallName: responseJson.stallName,
                     category: responseJson.category,
                     contactName: responseJson.contactName,
                     preferredName: responseJson.preferredName,

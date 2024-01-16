@@ -33,12 +33,12 @@ function useStallholders(
             if (selectedCategory === "Category") {
                 if (search === "") {
                     // No category or search term
-                    searchPath = `/search/findAllByOrderByNameAsc?page=${
+                    searchPath = `/search/findAllByOrderByStallNameAsc?page=${
                         currentPage - 1
                     }&size=${stallholdersPerPage}`;
                 } else {
                     // No category, search term given
-                    searchPath = `/search/findByNameContaining?name=${search}&page=${
+                    searchPath = `/search/findByStallNameContaining?name=${search}&page=${
                         currentPage - 1
                     }&size=${stallholdersPerPage}`;
                 }
@@ -51,7 +51,7 @@ function useStallholders(
                     }&size=${stallholdersPerPage}`;
                 } else {
                     // Both category and search term given
-                    searchPath = `/search/findByNameContainingAndCategory?name=${search}&category=${encodedCategory}&page=${
+                    searchPath = `/search/findByStallNameContainingAndCategory?name=${search}&category=${encodedCategory}&page=${
                         currentPage - 1
                     }&size=${stallholdersPerPage}`;
                 }
@@ -83,7 +83,7 @@ function useStallholders(
             for (const key in responseData) {
                 loadedStallholders.push({
                     id: responseData[key].id,
-                    stallName: responseData[key].name,
+                    stallName: responseData[key].stallName,
                     category: responseData[key].category,
                     contactName: responseData[key].contactName,
                     preferredName: responseData[key].preferredName,
