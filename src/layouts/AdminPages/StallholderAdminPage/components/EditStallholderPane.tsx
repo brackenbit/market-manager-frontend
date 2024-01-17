@@ -15,9 +15,6 @@ import useStallholderDetail from "../../../../CustomHooks/useStallholderDetail";
 import useStallholderCategories from "../../../../CustomHooks/useStallholderCategories";
 import { useOktaAuth } from "@okta/okta-react";
 import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
-import useStallholders from "../../../../CustomHooks/useStallholders";
-import { StallholderListSearchBar } from "../../../Utils/StallholderListSearchBar";
-import { Pagination } from "../../../Utils/Pagination";
 
 export const EditStallholderPane = () => {
     // State, custom hooks, and useEffect -----------------------------------
@@ -27,28 +24,6 @@ export const EditStallholderPane = () => {
     // Display flags
     const [displayWarning, setDisplayWarning] = useState(false);
     const [displaySuccess, setDisplaySuccess] = useState(false);
-
-    // useStallholders state/hook
-    // searchEditing is dynamically changed by user
-    const [searchEditing, setSearchEditing] = useState("");
-    // searchSubmitted is updated (to equal searchEditing) only on explicit user action
-    // the useStallholders hook re-runs on change to searchSubmitted
-    const [searchSubmitted, setSearchSubmitted] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("Category");
-    const [currentPage, setCurrentPage] = useState(1);
-    const [stallholdersPerPage] = useState(12);
-    const {
-        stallholders,
-        isLoadingStallholders,
-        httpErrorStallholders,
-        totalNumberOfStallholders,
-        totalPages,
-    } = useStallholders(
-        searchSubmitted,
-        selectedCategory,
-        currentPage,
-        stallholdersPerPage
-    );
 
     // useStallholderDetail state/hook
     const [stallholderSelectedId, setStallholderSelectedId] = useState<
@@ -116,9 +91,6 @@ export const EditStallholderPane = () => {
 
     // Functions ----------------------------------------------------------
 
-    // TODO - significant code duplication between here, StallholdersPage, ArchiveStallholderPane
-    // refactor needed, but want to commit this working update first.
-
     // cancelChanges
     // cancel changes made to stallholder details
     function cancelChanges() {
@@ -127,28 +99,6 @@ export const EditStallholderPane = () => {
             setStallholderEdited(stallholderSelected);
         }
     }
-
-    // onCategoryChange
-    // clear search fields and set category
-    // (Change of category most often indicates start of new search, so
-    //  clearing search fields improves usability.)
-    function onCategoryChange(newCategory: string) {
-        setSearchEditing("");
-        setSearchSubmitted("");
-        setSelectedCategory(newCategory);
-        setCurrentPage(1);
-    }
-
-    // handleSearch
-    // update searchSubmitted to reflect searchEditing
-    function handleSearch() {
-        setSearchSubmitted(searchEditing);
-        setCurrentPage(1);
-    }
-
-    // paginate
-    // set current page number
-    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
     // editStallholder
     // POST the updated stallholder to the backend
@@ -192,23 +142,14 @@ export const EditStallholderPane = () => {
         }
     }
 
-    if (
-        isLoadingStallholders ||
-        isLoadingStallholderCategories ||
-        isLoadingStallholder
-    ) {
+    if (isLoadingStallholderCategories || isLoadingStallholder) {
         return <SpinnerLoading />;
     }
 
-    if (
-        httpErrorStallholders ||
-        httpErrorStallholderCategories ||
-        httpErrorStallholder
-    ) {
+    if (httpErrorStallholderCategories || httpErrorStallholder) {
         return (
             <div className="container m-5">
                 <div className="alert alert-danger">
-                    {httpErrorStallholders ? httpErrorStallholders : ""}
                     {httpErrorStallholderCategories
                         ? httpErrorStallholderCategories
                         : ""}
@@ -235,25 +176,9 @@ export const EditStallholderPane = () => {
             )}
             <div className="row">
                 <div className="col-6">
-                    <StallholderListSearchBar
-                        search={searchEditing}
-                        setSearch={setSearchEditing}
-                        searchClicked={handleSearch}
-                        stallholderCategories={stallholderCategories}
-                        selectedCategory={selectedCategory}
-                        setSelectedCategory={onCategoryChange}
-                    />
                     <StallholderList
-                        stallholders={stallholders}
                         onClickFunction={setStallholderSelectedId}
                     />
-                    {totalPages > 1 && (
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            paginate={paginate}
-                        />
-                    )}
                 </div>
                 <div className="col-6">
                     <h5>Stallholder ID: {stallholderSelectedModel?.id}</h5>

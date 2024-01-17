@@ -38,7 +38,7 @@ function useStallholders(
                     }&size=${stallholdersPerPage}`;
                 } else {
                     // No category, search term given
-                    searchPath = `/search/findByStallNameContaining?name=${search}&page=${
+                    searchPath = `/search/findByStallNameContaining?stallName=${search}&page=${
                         currentPage - 1
                     }&size=${stallholdersPerPage}`;
                 }
@@ -51,7 +51,7 @@ function useStallholders(
                     }&size=${stallholdersPerPage}`;
                 } else {
                     // Both category and search term given
-                    searchPath = `/search/findByStallNameContainingAndCategory?name=${search}&category=${encodedCategory}&page=${
+                    searchPath = `/search/findByStallNameContainingAndCategory?stallName=${search}&category=${encodedCategory}&page=${
                         currentPage - 1
                     }&size=${stallholdersPerPage}`;
                 }
