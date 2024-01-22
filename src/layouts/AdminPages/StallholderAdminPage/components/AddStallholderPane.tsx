@@ -7,7 +7,7 @@ import { useOktaAuth } from "@okta/okta-react";
 import { useState } from "react";
 import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
 import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
-import { EditStallholderFields } from "./EditStallholderFields";
+import { EditStallholderForm } from "./EditStallholderForm";
 import useStallholderCategories from "../../../../CustomHooks/useStallholderCategories";
 import StallholderModel from "../../../../models/StallholderModel";
 
@@ -120,7 +120,7 @@ export const AddStallholderPane = () => {
             </p>
 
             <div className="">
-                <EditStallholderFields
+                <EditStallholderForm
                     stallholderCategories={stallholderCategories}
                     stallholderAttributes={stallholderAttributes}
                     setStallholderAttributes={setStallholderAttributes}

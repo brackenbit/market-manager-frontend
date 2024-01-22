@@ -9,7 +9,7 @@
 
 import { useEffect, useState } from "react";
 import { StallholderList } from "../../../Utils/StallholderList";
-import { EditStallholderFields } from "./EditStallholderFields";
+import { EditStallholderForm } from "./EditStallholderForm";
 import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
 import useStallholderDetail from "../../../../CustomHooks/useStallholderDetail";
 import useStallholderCategories from "../../../../CustomHooks/useStallholderCategories";
@@ -182,7 +182,7 @@ export const EditStallholderPane = () => {
                 </div>
                 <div className="col-6">
                     <h5>Stallholder ID: {stallholderSelectedModel?.id}</h5>
-                    <EditStallholderFields
+                    <EditStallholderForm
                         stallholderCategories={stallholderCategories}
                         stallholderAttributes={stallholderEdited}
                         setStallholderAttributes={setStallholderEdited}

@@ -2,21 +2,22 @@
  * Market Manager
  * (C) Brackenbit 2023
  *
- * EditStallholderFields
+ * EditStallholderForm
  * Reusable form for editing stallholder attributes.
  */
 
 import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
 import StallholderCategoryModel from "../../../../models/StallholderCategoryModel";
+import { TextInput } from "../../../Utils/TextInput";
 
-export const EditStallholderFields: React.FC<{
+export const EditStallholderForm: React.FC<{
     stallholderCategories: StallholderCategoryModel[];
     stallholderAttributes: StallholderAttributeRequest;
     setStallholderAttributes: any;
 }> = (props) => {
     // Handle change in input fields
     // (Category dropdown is handled separately below.)
-    function handleChange(e: any) {
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         let value;
         if (e.target.type === "checkbox") {
             value = e.target.checked;
@@ -32,20 +33,13 @@ export const EditStallholderFields: React.FC<{
     return (
         <div className="">
             <form method="POST">
-                {/* stallName */}
-                <div className="form-floating mb-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="stallNameInput"
-                        name="stallName"
-                        placeholder="" // Bootstrap floating label requires placeholder present
-                        required
-                        onChange={handleChange}
-                        value={props.stallholderAttributes.stallName}
-                    />
-                    <label htmlFor="stallNameInput">Stall Name *</label>
-                </div>
+                <TextInput
+                    label="Stall Name *"
+                    id="stallName"
+                    required={true}
+                    onChange={handleChange}
+                    value={props.stallholderAttributes.stallName}
+                />
                 {/* category */}
                 <div className="my-3">
                     <div className="dropdown">
@@ -86,62 +80,33 @@ export const EditStallholderFields: React.FC<{
                         </ul>
                     </div>
                 </div>
-                {/* contactName */}
-                <div className="form-floating mb-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="contactNameInput"
-                        name="contactName"
-                        placeholder=""
-                        required
-                        onChange={handleChange}
-                        value={props.stallholderAttributes.contactName}
-                    />
-                    <label htmlFor="contactNameInput">Contact Name *</label>
-                </div>
-                {/* preferredName */}
-                <div className="form-floating mb-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="preferredNameInput"
-                        name="preferredName"
-                        placeholder=""
-                        required
-                        onChange={handleChange}
-                        value={props.stallholderAttributes.preferredName}
-                    />
-                    <label htmlFor="preferredNameInput">Preferred Name</label>
-                </div>
-                {/* phone */}
-                <div className="form-floating mb-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="phoneInput"
-                        name="phone"
-                        placeholder=""
-                        required
-                        onChange={handleChange}
-                        value={props.stallholderAttributes.phone}
-                    />
-                    <label htmlFor="phoneInput">Phone *</label>
-                </div>
-                {/* email */}
-                <div className="form-floating mb-2">
-                    <input
-                        type="email"
-                        className="form-control"
-                        id="emailInput"
-                        name="email"
-                        placeholder=""
-                        required
-                        onChange={handleChange}
-                        value={props.stallholderAttributes.email}
-                    />
-                    <label htmlFor="emailInput">Email *</label>
-                </div>
+                <TextInput
+                    label="Contact Name *"
+                    id="contactName"
+                    required={true}
+                    onChange={handleChange}
+                    value={props.stallholderAttributes.contactName}
+                />
+                <TextInput
+                    label="Preferred Name"
+                    id="preferredName"
+                    onChange={handleChange}
+                    value={props.stallholderAttributes.preferredName}
+                />
+                <TextInput
+                    label="Phone *"
+                    id="phone"
+                    required={true}
+                    onChange={handleChange}
+                    value={props.stallholderAttributes.phone}
+                />
+                <TextInput
+                    label="Email *"
+                    id="email"
+                    required={true}
+                    onChange={handleChange}
+                    value={props.stallholderAttributes.email}
+                />
                 {/* regular */}
                 <div className="form-check my-3">
                     <input
@@ -174,23 +139,13 @@ export const EditStallholderFields: React.FC<{
                     />
                     <label htmlFor="stallSizeInput">Stall Size</label>
                 </div>
-                {/* characteristics */}
                 {/* TEMP - inelegant way of setting characteristics as placeholder */}
-                <div className="form-floating mb-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="characteristicsInput"
-                        name="characteristics"
-                        placeholder=""
-                        required
-                        onChange={handleChange}
-                        value={props.stallholderAttributes.characteristics}
-                    />
-                    <label htmlFor="characteristicsInput">
-                        Characteristics
-                    </label>
-                </div>
+                <TextInput
+                    label="Characteristics"
+                    id="characteristics"
+                    onChange={handleChange}
+                    value={props.stallholderAttributes.characteristics}
+                />
             </form>
         </div>
     );
