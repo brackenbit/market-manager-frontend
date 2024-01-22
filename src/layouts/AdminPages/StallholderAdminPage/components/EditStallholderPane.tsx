@@ -142,7 +142,7 @@ export const EditStallholderPane = () => {
         }
     }
 
-    if (isLoadingStallholderCategories || isLoadingStallholder) {
+    if (isLoadingStallholderCategories) {
         return <SpinnerLoading />;
     }
 
@@ -182,11 +182,15 @@ export const EditStallholderPane = () => {
                 </div>
                 <div className="col-6">
                     <h5>Stallholder ID: {stallholderSelectedModel?.id}</h5>
-                    <EditStallholderForm
-                        stallholderCategories={stallholderCategories}
-                        stallholderAttributes={stallholderEdited}
-                        setStallholderAttributes={setStallholderEdited}
-                    />
+                    {isLoadingStallholder ? (
+                        <SpinnerLoading />
+                    ) : (
+                        <EditStallholderForm
+                            stallholderCategories={stallholderCategories}
+                            stallholderAttributes={stallholderEdited}
+                            setStallholderAttributes={setStallholderEdited}
+                        />
+                    )}
                     {/* Bottom buttons */}
                     <div className="row mt-3">
                         <div className="col"></div>
