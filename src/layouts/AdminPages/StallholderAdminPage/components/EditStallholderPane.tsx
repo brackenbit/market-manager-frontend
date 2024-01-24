@@ -24,6 +24,7 @@ export const EditStallholderPane = () => {
     // Display flags
     const [displayWarning, setDisplayWarning] = useState(false);
     const [displaySuccess, setDisplaySuccess] = useState(false);
+    // displaySuccess resets on change to stallholder details, or selection of new stallholder
 
     // useStallholderDetail state/hook
     const [stallholderSelectedId, setStallholderSelectedId] = useState<
@@ -86,8 +87,17 @@ export const EditStallholderPane = () => {
                 );
             setStallholderSelected(newStallholder);
             setStallholderEdited(newStallholder);
+            // Reset displaySuccess here also
+            setDisplaySuccess(false);
         }
     }, [stallholderSelectedModel]);
+
+    // useEffect - reset displaySuccess when changes are made to stallholderEdited
+    // (useEffect may not be needed here, but this works and allows a simple interface
+    //  between EditStallholderPane and EditStallholderForm.)
+    useEffect(() => {
+        setDisplaySuccess(false);
+    }, [stallholderEdited]);
 
     // Functions ----------------------------------------------------------
 
