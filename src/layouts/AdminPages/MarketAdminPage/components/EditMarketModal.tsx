@@ -28,6 +28,8 @@ export const EditMarketModal: React.FC<{
                 ></button>
             </div>
             <div className="modal-body">
+                {/* TEMP */}
+                <h3>Event ID: {props.eventClicked}</h3>
                 <p>
                     This will become a modal for editing existing market events.
                     (Not yet implemented)

@@ -20,44 +20,19 @@ export const MarketAdminPage = () => {
     const { authState } = useOktaAuth();
 
     const [dateClicked, setDateClicked] = useState("");
-    const [toggleOnDateClick, setToggleOnDateClick] = useState(false);
-    // ^ toggles with each calendar click - needed to support e.g.
-    // clicking on the same date twice to add 2 x separate events
-    // (as dateClicked state would not change to trigger useEffect)
     const [eventClicked, setEventClicked] = useState("");
-    const [toggleOnEventClick, setToggleOnEventClick] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
 
     function handleDateClick(date: string) {
         setDateClicked(date);
-        setToggleOnDateClick(!toggleOnDateClick);
+        setShowAddModal(true);
     }
 
     function handleEventClick(id: string) {
         setEventClicked(id);
-        setToggleOnEventClick(!toggleOnEventClick);
+        setShowEditModal(true);
     }
-
-    // useEffect to trigger add modal when toggleOnDateClick changes
-    useEffect(() => {
-        // Ignore on initialMount
-        if (dateClicked === "") {
-            return;
-        } else {
-            setShowAddModal(true);
-        }
-    }, [toggleOnDateClick]);
-
-    // useEffect to trigger edit modal when toggleOnEventClick changes
-    useEffect(() => {
-        // Ignore on initialMount
-        if (eventClicked === "") {
-            return;
-        } else {
-            setShowEditModal(true);
-        }
-    }, [toggleOnEventClick]);
 
     return (
         <div>

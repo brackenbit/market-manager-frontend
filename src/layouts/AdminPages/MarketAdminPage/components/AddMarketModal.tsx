@@ -8,6 +8,7 @@
 
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
+import { TextInput } from "../../../Utils/TextInput";
 
 export const AddMarketModal: React.FC<{
     show: boolean;
@@ -35,6 +36,8 @@ export const AddMarketModal: React.FC<{
         "December",
     ];
 
+    function noop() {}
+
     return (
         // Using react-bootstrap <Modal> for easier programmatic showing/hiding of modal
         <Modal show={props.show} onHide={props.onHide} tabIndex={-1}>
@@ -51,6 +54,8 @@ export const AddMarketModal: React.FC<{
                 ></button>
             </div>
             <div className="modal-body">
+                {/* TEMP */}
+                <h3>{props.dateClicked}</h3>
                 <form>
                     {/* One-off / recurring selection */}
                     <div
@@ -87,17 +92,13 @@ export const AddMarketModal: React.FC<{
                         </label>
                     </div>
                     {/* title */}
-                    <div className="form-floating mb-2">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="titleInput"
-                            name="title"
-                            placeholder="" // Bootstrap floating label requires placeholder present
-                            required
-                        />
-                        <label htmlFor="titleInput">Title</label>
-                    </div>
+                    <TextInput
+                        label="Title"
+                        id="title"
+                        required={true}
+                        onChange={noop}
+                        value=""
+                    />
                     {!isOneOff && <h6>First event:</h6>}
                     {/* startDate */}
                     <div className="row">
@@ -188,29 +189,19 @@ export const AddMarketModal: React.FC<{
                         </label>
                     </div>
                     {/* Location */}
-                    <div className="form-floating mb-2">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="locationInput"
-                            name="location"
-                            placeholder=""
-                            required
-                        />
-                        <label htmlFor="locationInput">Location</label>
-                    </div>
+                    <TextInput
+                        label="Location"
+                        id="location"
+                        onChange={noop}
+                        value=""
+                    />
                     {/* Tags */}
-                    <div className="form-floating mb-2">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="tagsInput"
-                            name="tags"
-                            placeholder=""
-                            required
-                        />
-                        <label htmlFor="tagsInput">Tags</label>
-                    </div>
+                    <TextInput
+                        label="Tags"
+                        id="tags"
+                        onChange={noop}
+                        value=""
+                    />
                     {/* Recurrence pattern */}
                     {!isOneOff && (
                         <div className="">
