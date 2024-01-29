@@ -8,7 +8,9 @@
 
 import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
 import StallholderCategoryModel from "../../../../models/StallholderCategoryModel";
-import { TextInput } from "../../../Utils/TextInput";
+import { CheckInput } from "../../../Utils/InputComponents/CheckInput";
+import { NumberInput } from "../../../Utils/InputComponents/NumberInput";
+import { TextInput } from "../../../Utils/InputComponents/TextInput";
 
 export const EditStallholderForm: React.FC<{
     stallholderCategories: StallholderCategoryModel[];
@@ -16,19 +18,13 @@ export const EditStallholderForm: React.FC<{
     setStallholderAttributes: any;
 }> = (props) => {
     // Handle change in input fields
-    // (Category dropdown is handled separately below.)
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        let value;
-        if (e.target.type === "checkbox") {
-            value = e.target.checked;
-        } else {
-            value = e.target.value;
-        }
+    function handleChange(name: string, value: string | boolean) {
         props.setStallholderAttributes({
             ...props.stallholderAttributes,
-            [e.target.name]: value,
+            [name]: value,
         });
     }
+    // (Category dropdown is handled separately below.)
 
     return (
         <div className="">
@@ -37,7 +33,7 @@ export const EditStallholderForm: React.FC<{
                     label="Stall Name *"
                     id="stallName"
                     required={true}
-                    onChange={handleChange}
+                    handleChange={handleChange}
                     value={props.stallholderAttributes.stallName}
                 />
                 {/* category */}
@@ -84,66 +80,47 @@ export const EditStallholderForm: React.FC<{
                     label="Contact Name *"
                     id="contactName"
                     required={true}
-                    onChange={handleChange}
+                    handleChange={handleChange}
                     value={props.stallholderAttributes.contactName}
                 />
                 <TextInput
                     label="Preferred Name"
                     id="preferredName"
-                    onChange={handleChange}
+                    handleChange={handleChange}
                     value={props.stallholderAttributes.preferredName}
                 />
                 <TextInput
                     label="Phone *"
                     id="phone"
                     required={true}
-                    onChange={handleChange}
+                    handleChange={handleChange}
                     value={props.stallholderAttributes.phone}
                 />
                 <TextInput
                     label="Email *"
                     id="email"
                     required={true}
-                    onChange={handleChange}
+                    handleChange={handleChange}
                     value={props.stallholderAttributes.email}
                 />
-                {/* regular */}
-                <div className="form-check my-3">
-                    <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="regularCheckbox"
-                        name="regular"
-                        checked={props.stallholderAttributes.regular}
-                        onChange={handleChange}
-                    />
-                    <label
-                        className="form-check-label"
-                        htmlFor="regularCheckbox"
-                    >
-                        Regular Attendee
-                    </label>
-                </div>
-                {/* stallSize */}
-                <div className="form-floating mb-2">
-                    <input
-                        type="number"
-                        className="form-control"
-                        id="stallSizeInput"
-                        name="stallSize"
-                        placeholder=""
-                        required
-                        onChange={handleChange}
-                        value={props.stallholderAttributes.stallSize}
-                    />
-                    <label htmlFor="stallSizeInput">Stall Size</label>
-                </div>
+                <CheckInput
+                    label="Regular Attendee"
+                    id="regular"
+                    checked={props.stallholderAttributes.regular}
+                    handleChange={handleChange}
+                />
+                <NumberInput
+                    label="Stall Size"
+                    id="stallSize"
+                    required={true}
+                    handleChange={handleChange}
+                    value={props.stallholderAttributes.stallSize}
+                />
                 {/* TEMP - inelegant way of setting characteristics as placeholder */}
                 <TextInput
                     label="Characteristics"
                     id="characteristics"
-                    onChange={handleChange}
+                    handleChange={handleChange}
                     value={props.stallholderAttributes.characteristics}
                 />
             </form>

@@ -5,10 +5,11 @@
  * TextInput
  * Reusable text input component.
  * Uses Bootstrap floating labels, and a label must be provided in props.
+ * On change, passes name: string, value: string to the handleChange passed in props.
  */
 
-// Define type for onChange function (to avoid using "any")
-type OnChangeFunction = (e: React.ChangeEvent<HTMLInputElement>) => void;
+// Define type for handleChange function (to avoid using "any")
+type HandleChangeFunction = (name: string, value: string) => void;
 
 interface TextInputProps {
     id: string;
@@ -16,7 +17,7 @@ interface TextInputProps {
     label: string;
     placeholder?: string;
     required?: boolean;
-    onChange: OnChangeFunction;
+    handleChange: HandleChangeFunction;
     value: string;
 }
 
@@ -55,7 +56,9 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
                 name={name}
                 placeholder={placeholder}
                 required={required}
-                onChange={props.onChange}
+                onChange={(e) =>
+                    props.handleChange(e.target.name, e.target.value)
+                }
                 value={props.value}
             />
             <label htmlFor={props.id}>{props.label}</label>

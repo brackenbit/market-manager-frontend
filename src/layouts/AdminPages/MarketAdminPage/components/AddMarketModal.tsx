@@ -8,7 +8,7 @@
 
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
-import { TextInput } from "../../../Utils/TextInput";
+import { TextInput } from "../../../Utils/InputComponents/TextInput";
 
 export const AddMarketModal: React.FC<{
     show: boolean;
@@ -96,7 +96,7 @@ export const AddMarketModal: React.FC<{
                         label="Title"
                         id="title"
                         required={true}
-                        onChange={noop}
+                        handleChange={noop}
                         value=""
                     />
                     {!isOneOff && <h6>First event:</h6>}
@@ -192,14 +192,14 @@ export const AddMarketModal: React.FC<{
                     <TextInput
                         label="Location"
                         id="location"
-                        onChange={noop}
+                        handleChange={noop}
                         value=""
                     />
                     {/* Tags */}
                     <TextInput
                         label="Tags"
                         id="tags"
-                        onChange={noop}
+                        handleChange={noop}
                         value=""
                     />
                     {/* Recurrence pattern */}
