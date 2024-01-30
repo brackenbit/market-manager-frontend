@@ -11,109 +11,111 @@ import { TextInput } from "../TextInput";
 
 function noop() {}
 
-test('renders input with role "textbox"', () => {
-    // Arrange
-    render(
-        <TextInput
-            id="myTextInput"
-            label="myLabel"
-            handleChange={noop}
-            value=""
-        />
-    );
+describe("TextInput", () => {
+    test('renders input with role "textbox"', () => {
+        // Arrange
+        render(
+            <TextInput
+                id="myTextInput"
+                label="myLabel"
+                handleChange={noop}
+                value=""
+            />
+        );
 
-    // Act
-    const inputElement = screen.getByRole("textbox");
+        // Act
+        const inputElement = screen.getByRole("textbox");
 
-    // Assert
-    expect(inputElement).toBeInTheDocument();
-});
+        // Assert
+        expect(inputElement).toBeInTheDocument();
+    });
 
-test("renders input with label given in props", () => {
-    // Arrange
-    const label = "someLabel";
+    test("renders input with label given in props", () => {
+        // Arrange
+        const label = "someLabel";
 
-    render(
-        <TextInput
-            id="myTextInput"
-            label={label}
-            handleChange={noop}
-            value=""
-        />
-    );
+        render(
+            <TextInput
+                id="myTextInput"
+                label={label}
+                handleChange={noop}
+                value=""
+            />
+        );
 
-    // Act
-    const inputElement = screen.getByLabelText(label);
+        // Act
+        const inputElement = screen.getByLabelText(label);
 
-    // Assert
-    expect(inputElement).toBeInTheDocument();
-});
+        // Assert
+        expect(inputElement).toBeInTheDocument();
+    });
 
-test("renders input with content matching value in props", () => {
-    // Arrange
-    const value = "Hello world";
+    test("renders input with content matching value in props", () => {
+        // Arrange
+        const value = "Hello world";
 
-    render(
-        <TextInput
-            id="myTextInput"
-            label="myLabel"
-            handleChange={noop}
-            value={value}
-        />
-    );
+        render(
+            <TextInput
+                id="myTextInput"
+                label="myLabel"
+                handleChange={noop}
+                value={value}
+            />
+        );
 
-    // Act
-    const inputElement = screen.getByDisplayValue(value);
+        // Act
+        const inputElement = screen.getByDisplayValue(value);
 
-    // Assert
-    expect(inputElement).toBeInTheDocument;
-});
+        // Assert
+        expect(inputElement).toBeInTheDocument;
+    });
 
-test("calls onChange with new value when input is edited", async () => {
-    // Arrange
-    const user = userEvent.setup();
-    const handleChangeMock = jest.fn();
-    const name = "someName";
+    test("calls onChange with new value when input is edited", async () => {
+        // Arrange
+        const user = userEvent.setup();
+        const handleChangeMock = jest.fn();
+        const name = "someName";
 
-    render(
-        <TextInput
-            id="someId"
-            name={name}
-            label="myLabel"
-            handleChange={handleChangeMock}
-            value="Foo"
-        />
-    );
+        render(
+            <TextInput
+                id="someId"
+                name={name}
+                label="myLabel"
+                handleChange={handleChangeMock}
+                value="Foo"
+            />
+        );
 
-    // Act
-    const inputElement = screen.getByLabelText("myLabel");
-    await user.clear(inputElement);
+        // Act
+        const inputElement = screen.getByLabelText("myLabel");
+        await user.clear(inputElement);
 
-    // Assert
-    expect(handleChangeMock).toHaveBeenCalledWith(name, "");
-});
+        // Assert
+        expect(handleChangeMock).toHaveBeenCalledWith(name, "");
+    });
 
-test("correctly sets name if omitted", async () => {
-    // Arrange
-    const user = userEvent.setup();
-    const handleChangeMock = jest.fn();
-    const id = "someId";
-    const label = "someLabel";
+    test("correctly sets name if omitted", async () => {
+        // Arrange
+        const user = userEvent.setup();
+        const handleChangeMock = jest.fn();
+        const id = "someId";
+        const label = "someLabel";
 
-    render(
-        <TextInput
-            id={id}
-            label={label}
-            handleChange={handleChangeMock}
-            value="Foo"
-        />
-    );
+        render(
+            <TextInput
+                id={id}
+                label={label}
+                handleChange={handleChangeMock}
+                value="Foo"
+            />
+        );
 
-    // Act
-    const inputElement = screen.getByLabelText(label);
-    await user.clear(inputElement);
+        // Act
+        const inputElement = screen.getByLabelText(label);
+        await user.clear(inputElement);
 
-    // Assert
-    expect(handleChangeMock).toHaveBeenCalledWith(id, "");
-    // ^ will fail unless name has defaulted to the same as id
+        // Assert
+        expect(handleChangeMock).toHaveBeenCalledWith(id, "");
+        // ^ will fail unless name has defaulted to the same as id
+    });
 });
