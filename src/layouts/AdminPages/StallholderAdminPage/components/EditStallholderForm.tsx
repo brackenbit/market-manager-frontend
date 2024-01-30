@@ -8,6 +8,7 @@
 
 import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
 import StallholderCategoryModel from "../../../../models/StallholderCategoryModel";
+import { CategoryDropdown } from "../../../Utils/InputComponents/CategoryDropdown";
 import { CheckInput } from "../../../Utils/InputComponents/CheckInput";
 import { NumberInput } from "../../../Utils/InputComponents/NumberInput";
 import { TextInput } from "../../../Utils/InputComponents/TextInput";
@@ -36,45 +37,18 @@ export const EditStallholderForm: React.FC<{
                     handleChange={handleChange}
                     value={props.stallholderAttributes.stallName}
                 />
-                {/* category */}
                 <div className="my-3">
-                    <div className="dropdown">
-                        <button
-                            type="button"
-                            className="btn btn-secondary dropdown-toggle"
-                            id="dropdownSearchCategory"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                        >
-                            {props.stallholderAttributes.category}
-                        </button>
-                        <ul
-                            className="dropdown-menu"
-                            aria-labelledby="dropdownSearchCategory"
-                        >
-                            {props.stallholderCategories.map(
-                                (
-                                    stallholderCategory: StallholderCategoryModel
-                                ) => (
-                                    <li key={stallholderCategory.id}>
-                                        <a
-                                            className="dropdown-item"
-                                            href="#"
-                                            onClick={() =>
-                                                props.setStallholderAttributes({
-                                                    ...props.stallholderAttributes,
-                                                    category:
-                                                        stallholderCategory.name,
-                                                })
-                                            }
-                                        >
-                                            {stallholderCategory.name}
-                                        </a>
-                                    </li>
-                                )
-                            )}
-                        </ul>
-                    </div>
+                    <CategoryDropdown
+                        id="editCategoryDropdown"
+                        initialValue={props.stallholderAttributes.category}
+                        allowAll={false}
+                        handleChange={(newCategory) =>
+                            props.setStallholderAttributes({
+                                ...props.stallholderAttributes,
+                                category: newCategory,
+                            })
+                        }
+                    />
                 </div>
                 <TextInput
                     label="Contact Name *"

@@ -13,6 +13,7 @@ import useStallholderCategories from "../../CustomHooks/useStallholderCategories
 import StallholderCategoryModel from "../../models/StallholderCategoryModel";
 import { Pagination } from "./Pagination";
 import { SpinnerLoading } from "./SpinnerLoading";
+import { CategoryDropdown } from "./InputComponents/CategoryDropdown";
 
 export const StallholderList: React.FC<{
     onClickFunction: any;
@@ -114,52 +115,12 @@ export const StallholderList: React.FC<{
                         </div>
                     </div>
                     <div className="col-md-auto col-6">
-                        <div className="dropdown">
-                            <button
-                                type="button"
-                                className="btn btn-secondary dropdown-toggle"
-                                id="dropdownSearchCategory"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                {selectedCategory}
-                            </button>
-                            <ul
-                                className="dropdown-menu"
-                                aria-labelledby="dropdownSearchCategory"
-                            >
-                                <li key="All">
-                                    <a
-                                        className="dropdown-item"
-                                        href="#"
-                                        onClick={() =>
-                                            onCategoryChange("Category")
-                                        }
-                                    >
-                                        All
-                                    </a>
-                                </li>
-                                {stallholderCategories.map(
-                                    (
-                                        stallholderCategory: StallholderCategoryModel
-                                    ) => (
-                                        <li key={stallholderCategory.id}>
-                                            <a
-                                                className="dropdown-item"
-                                                href="#"
-                                                onClick={() =>
-                                                    onCategoryChange(
-                                                        stallholderCategory.name
-                                                    )
-                                                }
-                                            >
-                                                {stallholderCategory.name}
-                                            </a>
-                                        </li>
-                                    )
-                                )}
-                            </ul>
-                        </div>
+                        <CategoryDropdown
+                            id="categoryDropdown"
+                            initialValue={selectedCategory}
+                            allowAll={true}
+                            handleChange={onCategoryChange}
+                        />
                     </div>
                     <div className="col-md-auto col-6">
                         <button
