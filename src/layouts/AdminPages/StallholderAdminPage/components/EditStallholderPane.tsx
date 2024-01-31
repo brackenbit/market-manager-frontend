@@ -12,7 +12,6 @@ import { StallholderList } from "../../../Utils/StallholderList";
 import { EditStallholderForm } from "./EditStallholderForm";
 import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
 import useStallholderDetail from "../../../../CustomHooks/useStallholderDetail";
-import useStallholderCategories from "../../../../CustomHooks/useStallholderCategories";
 import { useOktaAuth } from "@okta/okta-react";
 import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
 
@@ -35,13 +34,6 @@ export const EditStallholderPane = () => {
         isLoadingStallholder,
         httpErrorStallholder,
     } = useStallholderDetail(stallholderSelectedId);
-
-    // useStallholderCategories hook
-    const {
-        stallholderCategories,
-        isLoadingStallholderCategories,
-        httpErrorStallholderCategories,
-    } = useStallholderCategories();
 
     // Stallholder detail fields
     // Define blankStallholder for initial state
@@ -152,17 +144,10 @@ export const EditStallholderPane = () => {
         }
     }
 
-    if (isLoadingStallholderCategories) {
-        return <SpinnerLoading />;
-    }
-
-    if (httpErrorStallholderCategories || httpErrorStallholder) {
+    if (httpErrorStallholder) {
         return (
             <div className="container m-5">
                 <div className="alert alert-danger">
-                    {httpErrorStallholderCategories
-                        ? httpErrorStallholderCategories
-                        : ""}
                     {httpErrorStallholder ? httpErrorStallholder : ""}
                 </div>
             </div>
@@ -196,7 +181,6 @@ export const EditStallholderPane = () => {
                         <SpinnerLoading />
                     ) : (
                         <EditStallholderForm
-                            stallholderCategories={stallholderCategories}
                             stallholderAttributes={stallholderEdited}
                             setStallholderAttributes={setStallholderEdited}
                         />

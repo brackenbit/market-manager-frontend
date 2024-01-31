@@ -9,8 +9,6 @@
 
 import { useState } from "react";
 import useStallholders from "../../CustomHooks/useStallholders";
-import useStallholderCategories from "../../CustomHooks/useStallholderCategories";
-import StallholderCategoryModel from "../../models/StallholderCategoryModel";
 import { Pagination } from "./Pagination";
 import { SpinnerLoading } from "./SpinnerLoading";
 import { CategoryDropdown } from "./InputComponents/CategoryDropdown";
@@ -39,13 +37,6 @@ export const StallholderList: React.FC<{
         currentPage,
         stallholdersPerPage
     );
-
-    // useStallholderCategories hook
-    const {
-        stallholderCategories,
-        isLoadingStallholderCategories,
-        httpErrorStallholderCategories,
-    } = useStallholderCategories();
 
     // handleEnter
     // call handleSearch if Enter pressed in search field
@@ -78,18 +69,15 @@ export const StallholderList: React.FC<{
     // set current page number
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-    if (isLoadingStallholders || isLoadingStallholderCategories) {
+    if (isLoadingStallholders) {
         return <SpinnerLoading />;
     }
 
-    if (httpErrorStallholders || httpErrorStallholderCategories) {
+    if (httpErrorStallholders) {
         return (
             <div className="container m-5">
                 <div className="alert alert-danger">
                     {httpErrorStallholders ? httpErrorStallholders : ""}
-                    {httpErrorStallholderCategories
-                        ? httpErrorStallholderCategories
-                        : ""}
                 </div>
             </div>
         );
@@ -117,7 +105,7 @@ export const StallholderList: React.FC<{
                     <div className="col-md-auto col-6">
                         <CategoryDropdown
                             id="categoryDropdown"
-                            initialValue={selectedCategory}
+                            value={selectedCategory}
                             allowAll={true}
                             handleChange={onCategoryChange}
                         />

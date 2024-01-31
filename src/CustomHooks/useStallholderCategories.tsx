@@ -3,10 +3,13 @@
  * (C) Brackenbit 2023
  *
  * useStallholderCategories
- * Custom hook for components which rely on a list of valid stallholder categories.
+ * Custom hook to provide a list of valid stallholder categories to AppContextProvider.
  * This list of stallholder categories is authoritative.
  * As it is customisable, it is not enforced at the database level or on existing stallholders.
  * (Trade off to give flexibility/reliability at cost of (fixable) inconsistency.)
+ *
+ * As this is now only used in AppContextProvider, a reusable hook isn't necessary,
+ * but having this separate still helps with readability.
  */
 
 import { useOktaAuth } from "@okta/okta-react";

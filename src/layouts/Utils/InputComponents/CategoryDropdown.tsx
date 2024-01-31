@@ -5,28 +5,24 @@
  * CategoryDropdown
  * Reusable dropdown component used to select stallholder categories.
  * id is passed as prop, as some pages will use multiple category dropdowns.
- * Initial value is set by prop
  * allowAll sets whether "All" option is available, e.g. for search vs. edit
  * On change, passes new category as string to handleChange passed in props.
  */
 
-import useStallholderCategories from "../../../CustomHooks/useStallholderCategories";
+import { useContext } from "react";
 import StallholderCategoryModel from "../../../models/StallholderCategoryModel";
+import { StallholderCategoryContext } from "../../../context/StallholderCategoryContext";
 
 type HandleChangeFunction = (category: string) => void;
 
 export const CategoryDropdown: React.FC<{
     id: string;
-    initialValue: string;
+    value: string;
     allowAll: boolean;
     handleChange: HandleChangeFunction;
 }> = (props) => {
-    // useStallholderCategories hook
-    const {
-        stallholderCategories,
-        isLoadingStallholderCategories,
-        httpErrorStallholderCategories,
-    } = useStallholderCategories();
+    // Use StallholderCategoriesContext
+    const stallholderCategories = useContext(StallholderCategoryContext);
 
     return (
         <div className="dropdown">
@@ -38,7 +34,7 @@ export const CategoryDropdown: React.FC<{
                 aria-haspopup="menu"
                 aria-expanded="false"
             >
-                {props.initialValue}
+                {props.value}
             </button>
             <div className="dropdown-menu" aria-labelledby={props.id}>
                 {props.allowAll && (

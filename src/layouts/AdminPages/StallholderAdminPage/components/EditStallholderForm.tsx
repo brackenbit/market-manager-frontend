@@ -7,14 +7,12 @@
  */
 
 import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
-import StallholderCategoryModel from "../../../../models/StallholderCategoryModel";
 import { CategoryDropdown } from "../../../Utils/InputComponents/CategoryDropdown";
 import { CheckInput } from "../../../Utils/InputComponents/CheckInput";
 import { NumberInput } from "../../../Utils/InputComponents/NumberInput";
 import { TextInput } from "../../../Utils/InputComponents/TextInput";
 
 export const EditStallholderForm: React.FC<{
-    stallholderCategories: StallholderCategoryModel[];
     stallholderAttributes: StallholderAttributeRequest;
     setStallholderAttributes: any;
 }> = (props) => {
@@ -40,7 +38,7 @@ export const EditStallholderForm: React.FC<{
                 <div className="my-3">
                     <CategoryDropdown
                         id="editCategoryDropdown"
-                        initialValue={props.stallholderAttributes.category}
+                        value={props.stallholderAttributes.category}
                         allowAll={false}
                         handleChange={(newCategory) =>
                             props.setStallholderAttributes({

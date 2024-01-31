@@ -5,11 +5,8 @@
 
 import { useOktaAuth } from "@okta/okta-react";
 import { useState } from "react";
-import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
 import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
 import { EditStallholderForm } from "./EditStallholderForm";
-import useStallholderCategories from "../../../../CustomHooks/useStallholderCategories";
-import StallholderModel from "../../../../models/StallholderModel";
 
 export const AddStallholderPane = () => {
     const { authState } = useOktaAuth();
@@ -32,13 +29,6 @@ export const AddStallholderPane = () => {
     };
     const [stallholderAttributes, setStallholderAttributes] =
         useState<StallholderAttributeRequest>(blankStallholder);
-
-    // Use custom hook for stallholder categories
-    const {
-        stallholderCategories,
-        isLoadingStallholderCategories,
-        httpErrorStallholderCategories,
-    } = useStallholderCategories();
 
     function clearFields() {
         setStallholderAttributes(blankStallholder);
@@ -87,20 +77,6 @@ export const AddStallholderPane = () => {
         }
     }
 
-    if (isLoadingStallholderCategories) {
-        return <SpinnerLoading />;
-    }
-
-    if (httpErrorStallholderCategories) {
-        return (
-            <div className="container m-5">
-                <div className="alert alert-danger">
-                    {httpErrorStallholderCategories}
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="mt-3">
             {displaySuccess && (
@@ -121,7 +97,6 @@ export const AddStallholderPane = () => {
 
             <div className="">
                 <EditStallholderForm
-                    stallholderCategories={stallholderCategories}
                     stallholderAttributes={stallholderAttributes}
                     setStallholderAttributes={setStallholderAttributes}
                 />

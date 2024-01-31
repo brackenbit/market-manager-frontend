@@ -21,6 +21,7 @@ import { AdminPage } from "./layouts/AdminPages/AdminPage/AdminPage";
 import { MarketPage } from "./layouts/MarketPage/MarketPage";
 import { MarketAdminPage } from "./layouts/AdminPages/MarketAdminPage/MarketAdminPage";
 import { StallholderAdminPage } from "./layouts/AdminPages/StallholderAdminPage/StallholderAdminPage";
+import { AppContextProvider } from "./context/AppContextProvider";
 
 const oktaAuth = new OktaAuth(OktaConfig);
 
@@ -44,53 +45,57 @@ export const App = () => {
                 restoreOriginalUri={restoreOriginalUri}
                 onAuthRequired={customAuthHandler}
             >
-                <Navbar />
-                <div className="flex-grow-1">
-                    <Switch>
-                        <Route path="/" exact>
-                            <LandingRedirect />
-                        </Route>
-                        <Route path="/home">
-                            <HomePage />
-                        </Route>
-                        <Route path="/landing">
-                            <LandingPage />
-                        </Route>
-                        <Route
-                            path="/login"
-                            render={() => <LoginWidget config={OktaConfig} />}
-                        ></Route>
-                        <Route
-                            path="/login/callback"
-                            component={LoginCallback}
-                        ></Route>
-                        <SecureRoute path="/markets" exact>
-                            <MarketsPage />
-                        </SecureRoute>
-                        <SecureRoute path="/markets/marketday">
-                            <MarketPage />
-                        </SecureRoute>
-                        <SecureRoute path="/markets/:marketId">
-                            <MarketPage />
-                        </SecureRoute>
-                        <SecureRoute path="/stallholders" exact>
-                            <StallholdersPage />
-                        </SecureRoute>
-                        <SecureRoute path="/stallholders/:stallholderId">
-                            <StallholderPage />
-                        </SecureRoute>
-                        <SecureRoute path="/admin" exact>
-                            <AdminPage />
-                        </SecureRoute>
-                        <SecureRoute path="/admin/market">
-                            <MarketAdminPage />
-                        </SecureRoute>
-                        <SecureRoute path="/admin/stallholder">
-                            <StallholderAdminPage />
-                        </SecureRoute>
-                    </Switch>
-                </div>
-                <Footer />
+                <AppContextProvider>
+                    <Navbar />
+                    <div className="flex-grow-1">
+                        <Switch>
+                            <Route path="/" exact>
+                                <LandingRedirect />
+                            </Route>
+                            <Route path="/home">
+                                <HomePage />
+                            </Route>
+                            <Route path="/landing">
+                                <LandingPage />
+                            </Route>
+                            <Route
+                                path="/login"
+                                render={() => (
+                                    <LoginWidget config={OktaConfig} />
+                                )}
+                            ></Route>
+                            <Route
+                                path="/login/callback"
+                                component={LoginCallback}
+                            ></Route>
+                            <SecureRoute path="/markets" exact>
+                                <MarketsPage />
+                            </SecureRoute>
+                            <SecureRoute path="/markets/marketday">
+                                <MarketPage />
+                            </SecureRoute>
+                            <SecureRoute path="/markets/:marketId">
+                                <MarketPage />
+                            </SecureRoute>
+                            <SecureRoute path="/stallholders" exact>
+                                <StallholdersPage />
+                            </SecureRoute>
+                            <SecureRoute path="/stallholders/:stallholderId">
+                                <StallholderPage />
+                            </SecureRoute>
+                            <SecureRoute path="/admin" exact>
+                                <AdminPage />
+                            </SecureRoute>
+                            <SecureRoute path="/admin/market">
+                                <MarketAdminPage />
+                            </SecureRoute>
+                            <SecureRoute path="/admin/stallholder">
+                                <StallholderAdminPage />
+                            </SecureRoute>
+                        </Switch>
+                    </div>
+                    <Footer />
+                </AppContextProvider>
             </Security>
         </div>
     );
