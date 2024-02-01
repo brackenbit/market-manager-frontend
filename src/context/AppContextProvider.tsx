@@ -23,6 +23,8 @@ export const AppContextProvider = (props: PropsWithChildren) => {
 
     // Return alert if stallholderCategories couldn't be loaded.
     // This indicates something very wrong, so no additional harm in blocking the full app.
+    // (NB: alert triggered by HTTP error on load attempt, which can only occur for authenticated users.
+    //  Therefore safely ignored when first rendered prior to log on.)
     if (httpErrorStallholderCategories) {
         return (
             <div className="container m-5">
