@@ -137,10 +137,16 @@ export const StallholderList: React.FC<{
                                     <div className="container-fluid">
                                         <div className="row">
                                             <div className="col">
-                                                {stallholder.stallName}
+                                                {
+                                                    stallholder.attributes
+                                                        .stallName
+                                                }
                                             </div>
                                             <div className="col">
-                                                {stallholder.category}
+                                                {
+                                                    stallholder.attributes
+                                                        .category
+                                                }
                                             </div>
                                         </div>
                                     </div>

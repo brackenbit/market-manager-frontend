@@ -1,13 +1,14 @@
 /*
  * Market Manager
- * (C) Brackenbit 2023
+ * (C) Brackenbit 2024
  *
- * StallholderAttributeRequest
- * Has corresponding attributes for all StallholderModel attributes except for id.
- * Used to pass stallholder attributes for add/edit requests.
+ * StallholderAttributeModel
+ * Model for attributes of a stallholder.
+ * Separate to StallholderModel as attributes are commonly used separate from an id,
+ * e.g. for add stallholder request.
  */
 
-class StallholderAttributeRequest {
+class StallholderAttributeModel {
     // Using TS constructor shorthand:
     constructor(
         public stallName: string,
@@ -22,4 +23,4 @@ class StallholderAttributeRequest {
     ) {}
 }
 
-export default StallholderAttributeRequest;
+export default StallholderAttributeModel;

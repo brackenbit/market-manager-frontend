@@ -13,7 +13,7 @@ import { EditStallholderForm } from "./EditStallholderForm";
 import { SpinnerLoading } from "../../../Utils/SpinnerLoading";
 import useStallholderDetail from "../../../../CustomHooks/useStallholderDetail";
 import { useOktaAuth } from "@okta/okta-react";
-import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
+import StallholderAttributeModel from "../../../../models/StallholderAttributeModel";
 
 export const EditStallholderPane = () => {
     // State, custom hooks, and useEffect -----------------------------------
@@ -37,7 +37,7 @@ export const EditStallholderPane = () => {
 
     // Stallholder detail fields
     // Define blankStallholder for initial state
-    const blankStallholder: StallholderAttributeRequest = {
+    const blankStallholder: StallholderAttributeModel = {
         stallName: "",
         category: "Category *",
         contactName: "",
@@ -53,29 +53,29 @@ export const EditStallholderPane = () => {
     // and is overwritten (with stallholderSelected) when loading a new stallholder
     // or cancelling changes
     const [stallholderEdited, setStallholderEdited] =
-        useState<StallholderAttributeRequest>(blankStallholder);
+        useState<StallholderAttributeModel>(blankStallholder);
 
     // stallholderSelected holds the current stallholder details returned from API
     // NB: this is a StallholderAttributeRequest rather than StallholderModel
     // model returned from API is converted by useEffect below
     const [stallholderSelected, setStallholderSelected] =
-        useState<StallholderAttributeRequest>();
+        useState<StallholderAttributeModel>();
 
     // useEffect - update stallholderSelected and stallholderEdited
     // when stallholderSelectedModel is updated
     useEffect(() => {
         if (stallholderSelectedModel) {
-            const newStallholder: StallholderAttributeRequest =
-                new StallholderAttributeRequest(
-                    stallholderSelectedModel.stallName,
-                    stallholderSelectedModel.category,
-                    stallholderSelectedModel.contactName,
-                    stallholderSelectedModel.preferredName,
-                    stallholderSelectedModel.phone,
-                    stallholderSelectedModel.email,
-                    stallholderSelectedModel.regular,
-                    stallholderSelectedModel.stallSize,
-                    stallholderSelectedModel.characteristics
+            const newStallholder: StallholderAttributeModel =
+                new StallholderAttributeModel(
+                    stallholderSelectedModel.attributes.stallName,
+                    stallholderSelectedModel.attributes.category,
+                    stallholderSelectedModel.attributes.contactName,
+                    stallholderSelectedModel.attributes.preferredName,
+                    stallholderSelectedModel.attributes.phone,
+                    stallholderSelectedModel.attributes.email,
+                    stallholderSelectedModel.attributes.regular,
+                    stallholderSelectedModel.attributes.stallSize,
+                    stallholderSelectedModel.attributes.characteristics
                 );
             setStallholderSelected(newStallholder);
             setStallholderEdited(newStallholder);

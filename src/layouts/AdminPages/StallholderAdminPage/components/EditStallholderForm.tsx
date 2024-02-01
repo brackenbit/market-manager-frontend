@@ -6,14 +6,14 @@
  * Reusable form for editing stallholder attributes.
  */
 
-import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
+import StallholderAttributeModel from "../../../../models/StallholderAttributeModel";
 import { CategoryDropdown } from "../../../Utils/InputComponents/CategoryDropdown";
 import { CheckInput } from "../../../Utils/InputComponents/CheckInput";
 import { NumberInput } from "../../../Utils/InputComponents/NumberInput";
 import { TextInput } from "../../../Utils/InputComponents/TextInput";
 
 export const EditStallholderForm: React.FC<{
-    stallholderAttributes: StallholderAttributeRequest;
+    stallholderAttributes: StallholderAttributeModel;
     setStallholderAttributes: any;
 }> = (props) => {
     // Handle change in input fields

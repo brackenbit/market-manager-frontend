@@ -81,19 +81,22 @@ function useStallholders(
             // Load retrieved stallholder data into an array of StallholderModel
             const loadedStallholders: StallholderModel[] = [];
             for (const key in responseData) {
-                loadedStallholders.push({
+                let newStallholder: StallholderModel = {
                     id: responseData[key].id,
-                    stallName: responseData[key].stallName,
-                    category: responseData[key].category,
-                    contactName: responseData[key].contactName,
-                    preferredName: responseData[key].preferredName,
-                    phone: responseData[key].phone,
-                    email: responseData[key].email,
+                    attributes: {
+                        stallName: responseData[key].stallName,
+                        category: responseData[key].category,
+                        contactName: responseData[key].contactName,
+                        preferredName: responseData[key].preferredName,
+                        phone: responseData[key].phone,
+                        email: responseData[key].email,
 
-                    regular: responseData[key].regular,
-                    stallSize: responseData[key].stallSize,
-                    characteristics: responseData[key].characteristics,
-                });
+                        regular: responseData[key].regular,
+                        stallSize: responseData[key].stallSize,
+                        characteristics: responseData[key].characteristics,
+                    },
+                };
+                loadedStallholders.push(newStallholder);
             }
             setStallholders(loadedStallholders);
             setIsLoadingStallholders(false);

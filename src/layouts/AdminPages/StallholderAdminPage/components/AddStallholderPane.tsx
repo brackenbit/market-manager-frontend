@@ -5,7 +5,7 @@
 
 import { useOktaAuth } from "@okta/okta-react";
 import { useState } from "react";
-import StallholderAttributeRequest from "../../../../models/StallholderAttributeRequest";
+import StallholderAttributeModel from "../../../../models/StallholderAttributeModel";
 import { EditStallholderForm } from "./EditStallholderForm";
 
 export const AddStallholderPane = () => {
@@ -16,7 +16,7 @@ export const AddStallholderPane = () => {
 
     // Stallholder info
     // Define blankStallholder for initial load and clearFields():
-    const blankStallholder: StallholderAttributeRequest = {
+    const blankStallholder: StallholderAttributeModel = {
         stallName: "",
         category: "Category *",
         contactName: "",
@@ -28,7 +28,7 @@ export const AddStallholderPane = () => {
         characteristics: "",
     };
     const [stallholderAttributes, setStallholderAttributes] =
-        useState<StallholderAttributeRequest>(blankStallholder);
+        useState<StallholderAttributeModel>(blankStallholder);
 
     function clearFields() {
         setStallholderAttributes(blankStallholder);
