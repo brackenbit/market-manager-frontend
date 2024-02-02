@@ -186,7 +186,7 @@ export const EditStallholderPane = () => {
                         />
                     )}
                     {/* Bottom buttons */}
-                    <div className="row mt-3">
+                    <div className="row my-3">
                         <div className="col"></div>
                         <div className="col-auto">
                             <button
